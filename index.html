@@ -1,0 +1,598 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Travel Exception Map</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap');
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        :root {
+            --visa-free: #22c55e;
+            --visa-on-arrival: #eab308;
+            --evisa: #3b82f6;
+            --visa-required: #ef4444;
+            --special-zone: #a855f7;
+            --bg-dark: #0f172a;
+            --bg-card: #1e293b;
+            --text-primary: #f1f5f9;
+            --text-secondary: #94a3b8;
+        }
+        
+        body {
+            font-family: 'Outfit', sans-serif;
+            background: var(--bg-dark);
+            color: var(--text-primary);
+            min-height: 100vh;
+        }
+        
+        header {
+            background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+            padding: 1.5rem 2rem;
+            border-bottom: 1px solid #334155;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+        
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+        
+        .logo-icon {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, #22c55e, #3b82f6);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+        }
+        
+        .logo h1 {
+            font-size: 1.5rem;
+            font-weight: 600;
+            background: linear-gradient(90deg, #22c55e, #3b82f6);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .controls {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+        
+        .toggle-btn {
+            background: var(--bg-card);
+            border: 1px solid #334155;
+            color: var(--text-primary);
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            cursor: pointer;
+            font-family: inherit;
+            font-size: 0.875rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: all 0.2s;
+        }
+        
+        .toggle-btn:hover {
+            background: #334155;
+        }
+        
+        .toggle-btn.active {
+            background: var(--special-zone);
+            border-color: var(--special-zone);
+        }
+        
+        #map {
+            height: calc(100vh - 80px);
+            width: 100%;
+        }
+        
+        .legend {
+            background: var(--bg-card);
+            padding: 1rem;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+        }
+        
+        .legend h3 {
+            font-size: 0.875rem;
+            margin-bottom: 0.75rem;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+        
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-bottom: 0.5rem;
+            font-size: 0.875rem;
+        }
+        
+        .legend-color {
+            width: 20px;
+            height: 20px;
+            border-radius: 4px;
+        }
+        
+        .leaflet-popup-content-wrapper {
+            background: var(--bg-card);
+            color: var(--text-primary);
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.4);
+        }
+        
+        .leaflet-popup-tip {
+            background: var(--bg-card);
+        }
+        
+        .leaflet-popup-content {
+            margin: 1rem;
+            min-width: 280px;
+        }
+        
+        .country-info {
+            font-family: 'Outfit', sans-serif;
+        }
+        
+        .country-info h2 {
+            font-size: 1.25rem;
+            margin-bottom: 0.75rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .status-badge {
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 500;
+            text-transform: uppercase;
+        }
+        
+        .status-free { background: var(--visa-free); color: #000; }
+        .status-arrival { background: var(--visa-on-arrival); color: #000; }
+        .status-evisa { background: var(--evisa); color: #fff; }
+        .status-required { background: var(--visa-required); color: #fff; }
+        
+        .info-grid {
+            display: grid;
+            gap: 0.5rem;
+            margin: 1rem 0;
+        }
+        
+        .info-row {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.875rem;
+        }
+        
+        .info-label {
+            color: var(--text-secondary);
+        }
+        
+        .info-value {
+            font-weight: 500;
+        }
+        
+        .special-zones {
+            margin-top: 1rem;
+            padding-top: 1rem;
+            border-top: 1px solid #334155;
+        }
+        
+        .special-zones h4 {
+            font-size: 0.875rem;
+            color: var(--special-zone);
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .zone-item {
+            background: rgba(168, 85, 247, 0.1);
+            border: 1px solid rgba(168, 85, 247, 0.3);
+            padding: 0.5rem;
+            border-radius: 6px;
+            margin-bottom: 0.5rem;
+            font-size: 0.8rem;
+        }
+        
+        .zone-item strong {
+            color: var(--special-zone);
+        }
+        
+        .source-link {
+            display: inline-block;
+            margin-top: 0.75rem;
+            color: var(--evisa);
+            text-decoration: none;
+            font-size: 0.8rem;
+        }
+        
+        .source-link:hover {
+            text-decoration: underline;
+        }
+        
+        .search-box {
+            background: var(--bg-card);
+            border: 1px solid #334155;
+            color: var(--text-primary);
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            font-family: inherit;
+            font-size: 0.875rem;
+            width: 200px;
+        }
+        
+        .search-box::placeholder {
+            color: var(--text-secondary);
+        }
+        
+        .search-box:focus {
+            outline: none;
+            border-color: var(--evisa);
+        }
+        
+        @media (max-width: 768px) {
+            header {
+                padding: 1rem;
+            }
+            
+            .logo h1 {
+                font-size: 1.25rem;
+            }
+            
+            .search-box {
+                width: 100%;
+            }
+            
+            .controls {
+                width: 100%;
+                justify-content: space-between;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="logo">
+            <div class="logo-icon">🌍</div>
+            <h1>Travel Exception Map</h1>
+        </div>
+        <div class="controls">
+            <input type="text" class="search-box" id="searchBox" placeholder="Search country...">
+            <button class="toggle-btn active" id="toggleZones">
+                <span>✨</span> Special Zones
+            </button>
+        </div>
+    </header>
+    
+    <div id="map"></div>
+    
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script>
+        // Initialize map
+        const map = L.map('map', {
+            center: [20, 0],
+            zoom: 2,
+            minZoom: 2,
+            maxZoom: 8
+        });
+        
+        L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
+            attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OSM</a> &copy; <a href="https://carto.com/">CARTO</a>',
+            subdomains: 'abcd',
+            maxZoom: 20
+        }).addTo(map);
+        
+        // Color scheme
+        const colors = {
+            visaFree: '#22c55e',
+            visaOnArrival: '#eab308',
+            eVisa: '#3b82f6',
+            visaRequired: '#ef4444',
+            specialZone: '#a855f7'
+        };
+        
+        // Sample country data with visa status (for demo - real app would have full dataset)
+        const countryData = {
+            'JPN': { name: 'Japan', status: 'visa-free', stay: '90 days', conditions: 'Visa-free for tourists', lastUpdated: '2026-01-15' },
+            'KOR': { name: 'South Korea', status: 'visa-free', stay: '90 days', conditions: 'Visa-free entry', lastUpdated: '2026-01-15',
+                specialZones: [
+                    { name: 'Jeju Island', condition: 'Filipinos can visit Jeju without visa, but not mainland Korea', coords: [33.5, 126.5] }
+                ]},
+            'PHL': { name: 'Philippines', status: 'visa-free', stay: '30 days', conditions: 'Visa-free for tourism', lastUpdated: '2026-02-01' },
+            'USA': { name: 'United States', status: 'visa-required', stay: 'N/A', conditions: 'Visa required for most', lastUpdated: '2026-01-01' },
+            'GBR': { name: 'United Kingdom', status: 'visa-free', stay: '6 months', conditions: 'Visa-free for tourism', lastUpdated: '2025-12-01' },
+            'DEU': { name: 'Germany', status: 'visa-free', stay: '90 days', conditions: 'Schengen area', lastUpdated: '2025-11-01' },
+            'FRA': { name: 'France', status: 'visa-free', stay: '90 days', conditions: 'Schengen area', lastUpdated: '2025-11-01' },
+            'ITA': { name: 'Italy', status: 'visa-free', stay: '90 days', conditions: 'Schengen area', lastUpdated: '2025-11-01' },
+            'ESP': { name: 'Spain', status: 'visa-free', stay: '90 days', conditions: 'Schengen area', lastUpdated: '2025-11-01' },
+            'PRT': { name: 'Portugal', status: 'visa-free', stay: '90 days', conditions: 'Schengen area', lastUpdated: '2025-11-01' },
+            'THA': { name: 'Thailand', status: 'visa-on-arrival', stay: '15-30 days', conditions: 'VOA available at airports', lastUpdated: '2026-01-20' },
+            'VNM': { name: 'Vietnam', status: 'evisa', stay: '90 days', conditions: 'eVisa available online', lastUpdated: '2026-01-10' },
+            'MYS': { name: 'Malaysia', status: 'visa-free', stay: '90 days', conditions: 'Visa-free for tourism', lastUpdated: '2025-12-15' },
+            'SGP': { name: 'Singapore', status: 'visa-free', stay: '30-90 days', conditions: 'Visa-free transit', lastUpdated: '2026-01-05' },
+            'IDN': { name: 'Indonesia', status: 'visa-on-arrival', stay: '30 days', conditions: 'VOA available, extendable', lastUpdated: '2026-01-25',
+                specialZones: [
+                    { name: 'Bali & Java', condition: 'Standard VOA applies', coords: [-8.5, 115.0] },
+                    { name: 'Restricted Areas', condition: 'Some regions require special permits (Papua, Maluku)', coords: [-3.0, 128.0] }
+                ]},
+            'HKG': { name: 'Hong Kong', status: 'visa-free', stay: '90 days', conditions: 'Separate immigration from China', lastUpdated: '2026-01-01',
+                specialZones: [
+                    { name: 'Hong Kong SAR', condition: 'Separate visa policy from mainland China', coords: [22.3, 114.2] }
+                ]},
+            'MAC': { name: 'Macau', status: 'visa-free', stay: '30 days', conditions: 'Separate from mainland China', lastUpdated: '2026-01-01' },
+            'CHN': { name: 'China', status: 'evisa', stay: '30-90 days', conditions: 'eVisa required for most nationalities', lastUpdated: '2026-01-15',
+                specialZones: [
+                    { name: 'Hainan Island', condition: 'Visa-free for group tours from select countries', coords: [19.5, 109.5] },
+                    { name: 'Shenzhen SEZ', condition: '5-day visa-free for cruise passengers', coords: [22.5, 114.0] }
+                ]},
+            'TWN': { name: 'Taiwan', status: 'visa-free', stay: '90 days', conditions: 'Visa-free for many nationalities', lastUpdated: '2026-01-10' },
+            'AUS': { name: 'Australia', status: 'evisa', stay: '3 months', conditions: 'ETA or eVisa required', lastUpdated: '2026-01-20' },
+            'NZL': { name: 'New Zealand', status: 'visa-free', stay: '90 days', conditions: 'Visa-waiver program', lastUpdated: '2025-12-01' },
+            'CAN': { name: 'Canada', status: 'visa-required', stay: 'N/A', conditions: 'Visa required (ETA for some)', lastUpdated: '2026-01-01' },
+            'MEX': { name: 'Mexico', status: 'visa-free', stay: '180 days', conditions: 'Visa-free for tourism (FMM required)', lastUpdated: '2026-01-05' },
+            'BRA': { name: 'Brazil', status: 'visa-free', stay: '90 days', conditions: 'Visa-free for tourism', lastUpdated: '2025-12-20' },
+            'ARG': { name: 'Argentina', status: 'visa-free', stay: '90 days', conditions: 'Visa-free for tourism', lastUpdated: '2025-11-15' },
+            'ZAF': { name: 'South Africa', status: 'visa-on-arrival', stay: '30-90 days', conditions: 'VOA available at airports', lastUpdated: '2026-01-10' },
+            'EGY': { name: 'Egypt', status: 'visa-on-arrival', stay: '30 days', conditions: 'VOA available at airports', lastUpdated: '2026-01-15' },
+            'TUR': { name: 'Turkey', status: 'evisa', stay: '30-90 days', conditions: 'eVisa available online', lastUpdated: '2026-01-20' },
+            'ARE': { name: 'UAE', status: 'visa-on-arrival', stay: '30-90 days', conditions: 'VOA for eligible nationalities', lastUpdated: '2026-01-25' },
+            'IND': { name: 'India', status: 'evisa', stay: '30-60 days', conditions: 'eVisa available online', lastUpdated: '2026-01-20' },
+            'RUS': { name: 'Russia', status: 'evisa', stay: '16 days', conditions: 'eVisa required', lastUpdated: '2026-01-15' },
+            'UKR': { name: 'Ukraine', status: 'visa-free', stay: '90 days', conditions: 'Visa-free for tourism', lastUpdated: '2025-12-01' },
+            'GRC': { name: 'Greece', status: 'visa-free', stay: '90 days', conditions: 'Schengen area', lastUpdated: '2025-11-01' },
+            'NLD': { name: 'Netherlands', status: 'visa-free', stay: '90 days', conditions: 'Schengen area', lastUpdated: '2025-11-01' },
+            'BEL': { name: 'Belgium', status: 'visa-free', stay: '90 days', conditions: 'Schengen area', lastUpdated: '2025-11-01' },
+            'CHE': { name: 'Switzerland', status: 'visa-free', stay: '90 days', conditions: 'Schengen area', lastUpdated: '2025-11-01' },
+            'AUT': { name: 'Austria', status: 'visa-free', stay: '90 days', conditions: 'Schengen area', lastUpdated: '2025-11-01' },
+            'POL': { name: 'Poland', status: 'visa-free', stay: '90 days', conditions: 'Schengen area', lastUpdated: '2025-11-01' },
+            'CZE': { name: 'Czech Republic', status: 'visa-free', stay: '90 days', conditions: 'Schengen area', lastUpdated: '2025-11-01' },
+            'SWE': { name: 'Sweden', status: 'visa-free', stay: '90 days', conditions: 'Schengen area', lastUpdated: '2025-11-01' },
+            'NOR': { name: 'Norway', status: 'visa-free', stay: '90 days', conditions: 'Schengen area', lastUpdated: '2025-11-01' },
+            'DNK': { name: 'Denmark', status: 'visa-free', stay: '90 days', conditions: 'Schengen area', lastUpdated: '2025-11-01' },
+            'FIN': { name: 'Finland', status: 'visa-free', stay: '90 days', conditions: 'Schengen area', lastUpdated: '2025-11-01' },
+            'IRL': { name: 'Ireland', status: 'visa-free', stay: '90 days', conditions: 'Separate from UK Schengen', lastUpdated: '2025-12-01' },
+            
+            // Special territories
+            'GBR-CA': { name: 'Guernsey (UK)', status: 'special', stay: 'Visa-free', conditions: 'Part of Common Travel Area', lastUpdated: '2026-01-01', parent: 'GBR' },
+            'GBR-JE': { name: 'Jersey (UK)', status: 'special', stay: 'Visa-free', conditions: 'Part of Common Travel Area', lastUpdated: '2026-01-01', parent: 'GBR' },
+            'ESP-IC': { name: 'Canary Islands', status: 'special', stay: '90 days', conditions: 'Part of Spain/Schengen', lastUpdated: '2026-01-01', parent: 'ESP' },
+            'PRT-MA': { name: 'Madeira', status: 'special', stay: '90 days', conditions: 'Part of Portugal/Schengen', lastUpdated: '2026-01-01', parent: 'PRT' },
+            'FRA-PF': { name: 'French Polynesia', status: 'visa-free', stay: '90 days', conditions: 'French overseas territory', lastUpdated: '2026-01-01', parent: 'FRA' },
+            'USA-HI': { name: 'Hawaii', status: 'visa-free', stay: '90 days', conditions: 'Part of USA', lastUpdated: '2026-01-01', parent: 'USA' },
+            'USA-PR': { name: 'Puerto Rico', status: 'visa-free', stay: '90 days', conditions: 'US territory', lastUpdated: '2026-01-01', parent: 'USA' },
+            'AUS-CC': { name: 'Cocos Islands', status: 'visa-free', stay: '90 days', conditions: 'Australian territory', lastUpdated: '2026-01-01', parent: 'AUS' },
+            'CHN-HN': { name: 'Hainan Island', status: 'visa-free', stay: '30 days', conditions: 'Visa-free for group tours', lastUpdated: '2026-01-15', parent: 'CHN' },
+            'DNK-FO': { name: 'Faroe Islands', status: 'visa-free', stay: '90 days', conditions: 'Part of Denmark', lastUpdated: '2026-01-01', parent: 'DNK' },
+            'NOR-SJ': { name: 'Svalbard', status: 'visa-free', stay: 'Unlimited', conditions: 'No visa required', lastUpdated: '2026-01-01', parent: 'NOR' },
+            
+            // Micronesian special cases
+            'FSM': { name: 'Federated States of Micronesia', status: 'special', stay: '30 days', conditions: 'Visa-free entry under Compact of Free Association', lastUpdated: '2026-01-01' },
+            'MHL': { name: 'Marshall Islands', status: 'special', stay: '90 days', conditions: 'Visa-free under Compact of Free Association', lastUpdated: '2026-01-01' },
+            'PLW': { name: 'Palau', status: 'visa-free', stay: '90 days', conditions: 'Visa-free for many nationalities', lastUpdated: '2026-01-01' }
+        };
+        
+        // Special zones layer
+        const specialZonesLayer = L.layerGroup().addTo(map);
+        let showSpecialZones = true;
+        
+        // Add special zone markers
+        const specialZones = [
+            { name: 'Jeju Island, Korea', coords: [33.5, 126.5], country: 'KOR', note: 'Filipinos can visit Jeju without visa' },
+            { name: 'Hong Kong SAR', coords: [22.3, 114.2], country: 'HKG', note: 'Separate immigration from China' },
+            { name: 'Macau SAR', coords: [22.2, 113.5], country: 'MAC', note: 'Separate visa policy' },
+            { name: 'Hainan Island, China', coords: [19.5, 109.5], country: 'CHN', note: 'Visa-free for group tours' },
+            { name: 'Guernsey, UK', coords: [49.4, -2.5], country: 'GBR', note: 'Common Travel Area' },
+            { name: 'Jersey, UK', coords: [49.2, -2.1], country: 'GBR', note: 'Common Travel Area' },
+            { name: 'Canary Islands, Spain', coords: [28.0, -15.5], country: 'ESP', note: 'Part of Schengen' },
+            { name: 'Madeira, Portugal', coords: [32.7, -17.0], country: 'PRT', note: 'Part of Schengen' },
+            { name: 'Faroe Islands', coords: [62.0, -7.0], country: 'DNK', note: 'Part of Denmark' },
+            { name: 'Svalbard, Norway', coords: [78.0, 16.0], country: 'NOR', note: 'No visa required, unlimited stay' },
+            { name: 'Micronesia', coords: [7.5, 150.5], country: 'FSM', note: 'Compact of Free Association' },
+            { name: 'Marshall Islands', coords: [7.0, 171.0], country: 'MHL', note: 'Compact of Free Association' },
+            { name: 'French Polynesia', coords: [-17.6, -149.4], country: 'FRA', note: 'French overseas' },
+            { name: 'Bali, Indonesia', coords: [-8.5, 115.0], country: 'IDN', note: 'VOA available' },
+            { name: 'Papua, Indonesia', coords: [-3.5, 130.0], country: 'IDN', note: 'Special permit required' }
+        ];
+        
+        function addSpecialZones() {
+            specialZones.forEach(zone => {
+                const marker = L.circleMarker(zone.coords, {
+                    radius: 8,
+                    fillColor: colors.specialZone,
+                    color: '#fff',
+                    weight: 2,
+                    opacity: 1,
+                    fillOpacity: 0.8
+                }).bindPopup(`<strong>${zone.name}</strong><br><span style="color: #a855f7;">${zone.note}</span>`);
+                specialZonesLayer.addLayer(marker);
+            });
+        }
+        
+        function toggleSpecialZones() {
+            if (map.hasLayer(specialZonesLayer)) {
+                map.removeLayer(specialZonesLayer);
+            } else if (showSpecialZones) {
+                specialZonesLayer.addTo(map);
+            }
+        }
+        
+        // Add special zones on load
+        addSpecialZones();
+        
+        // Toggle button
+        document.getElementById('toggleZones').addEventListener('click', function() {
+            showSpecialZones = !showSpecialZones;
+            this.classList.toggle('active');
+            toggleSpecialZones();
+        });
+        
+        // Status badge class
+        function getStatusClass(status) {
+            switch(status) {
+                case 'visa-free': return 'status-free';
+                case 'visa-on-arrival': return 'status-arrival';
+                case 'evisa': return 'status-evisa';
+                case 'visa-required': return 'status-required';
+                default: return 'status-free';
+            }
+        }
+        
+        function getStatusLabel(status) {
+            switch(status) {
+                case 'visa-free': return 'Visa Free';
+                case 'visa-on-arrival': return 'Visa on Arrival';
+                case 'evisa': return 'eVisa';
+                case 'visa-required': return 'Visa Required';
+                case 'special': return 'Special Status';
+                default: return status;
+            }
+        }
+        
+        // Load country boundaries
+        fetch('https://raw.githubusercontent.com/datasets/geo-countries/master/data/countries.geojson')
+            .then(response => response.json())
+            .then(data => {
+                const geoJsonLayer = L.geoJSON(data, {
+                    style: function(feature) {
+                        const iso = feature.properties.ISO_A3;
+                        const country = countryData[iso];
+                        let fillColor = colors.visaRequired;
+                        
+                        if (country) {
+                            switch(country.status) {
+                                case 'visa-free': fillColor = colors.visaFree; break;
+                                case 'visa-on-arrival': fillColor = colors.visaOnArrival; break;
+                                case 'evisa': fillColor = colors.eVisa; break;
+                                case 'visa-required': fillColor = colors.visaRequired; break;
+                                case 'special': fillColor = colors.specialZone; break;
+                            }
+                        }
+                        
+                        return {
+                            fillColor: fillColor,
+                            weight: 1,
+                            opacity: 1,
+                            color: '#1e293b',
+                            fillOpacity: 0.7
+                        };
+                    },
+                    onEachFeature: function(feature, layer) {
+                        const iso = feature.properties.ISO_A3;
+                        const country = countryData[iso];
+                        
+                        if (country) {
+                            layer.bindPopup(`
+                                <div class="country-info">
+                                    <h2>
+                                        ${country.name}
+                                        <span class="status-badge ${getStatusClass(country.status)}">${getStatusLabel(country.status)}</span>
+                                    </h2>
+                                    <div class="info-grid">
+                                        <div class="info-row">
+                                            <span class="info-label">Max Stay:</span>
+                                            <span class="info-value">${country.stay}</span>
+                                        </div>
+                                        <div class="info-row">
+                                            <span class="info-label">Conditions:</span>
+                                            <span class="info-value">${country.conditions}</span>
+                                        </div>
+                                        <div class="info-row">
+                                            <span class="info-label">Last Updated:</span>
+                                            <span class="info-value">${country.lastUpdated}</span>
+                                        </div>
+                                    </div>
+                                    ${country.specialZones ? `
+                                        <div class="special-zones">
+                                            <h4>✨ Special Zones</h4>
+                                            ${country.specialZones.map(zone => `
+                                                <div class="zone-item">
+                                                    <strong>${zone.name}</strong><br>
+                                                    ${zone.condition}
+                                                </div>
+                                            `).join('')}
+                                        </div>
+                                    ` : ''}
+                                    <a href="https://www.timaticweb.com/" target="_blank" class="source-link">Source: IATA Timatic →</a>
+                                </div>
+                            `);
+                        }
+                    }
+                }).addTo(map);
+            })
+            .catch(err => console.error('Error loading GeoJSON:', err));
+        
+        // Search functionality
+        document.getElementById('searchBox').addEventListener('input', function(e) {
+            const query = e.target.value.toLowerCase();
+            if (query.length < 2) return;
+            
+            // Simple search - would need to be enhanced for production
+            Object.entries(countryData).forEach(([iso, data]) => {
+                if (data.name.toLowerCase().includes(query)) {
+                    // Could add marker or highlight here
+                    console.log('Found:', data.name);
+                }
+            });
+        });
+        
+        // Legend
+        const legend = L.control({ position: 'bottomright' });
+        
+        legend.onAdd = function(map) {
+            const div = L.DomUtil.create('div', 'legend');
+            div.innerHTML = `
+                <h3>Visa Status</h3>
+                <div class="legend-item">
+                    <div class="legend-color" style="background: ${colors.visaFree}"></div>
+                    <span>Visa Free</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-color" style="background: ${colors.visaOnArrival}"></div>
+                    <span>Visa on Arrival</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-color" style="background: ${colors.eVisa}"></div>
+                    <span>eVisa</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-color" style="background: ${colors.visaRequired}"></div>
+                    <span>Visa Required</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-color" style="background: ${colors.specialZone}"></div>
+                    <span>Special Zone</span>
+                </div>
+            `;
+            return div;
+        };
+        
+        legend.addTo(map);
+    </script>
+</body>
+</html>

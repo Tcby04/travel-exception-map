@@ -403,21 +403,48 @@
         
         // Add special zone markers
         const specialZones = [
-            { name: 'Jeju Island, Korea', coords: [33.5, 126.5], country: 'KOR', note: 'Filipinos can visit Jeju without visa' },
-            { name: 'Hong Kong SAR', coords: [22.3, 114.2], country: 'HKG', note: 'Separate immigration from China' },
-            { name: 'Macau SAR', coords: [22.2, 113.5], country: 'MAC', note: 'Separate visa policy' },
-            { name: 'Hainan Island, China', coords: [19.5, 109.5], country: 'CHN', note: 'Visa-free for group tours' },
-            { name: 'Guernsey, UK', coords: [49.4, -2.5], country: 'GBR', note: 'Common Travel Area' },
+            // SARs
+            { name: 'Hong Kong SAR', coords: [22.3, 114.2], country: 'HKG', note: 'Separate immigration from China - 90 days for many' },
+            { name: 'Macau SAR', coords: [22.2, 113.5], country: 'MAC', note: 'Separate visa policy - 30 days for many' },
+            // COFA Nations
+            { name: 'Micronesia', coords: [7.5, 150.5], country: 'FSM', note: 'COFA: US citizens visa-free 30 days' },
+            { name: 'Marshall Islands', coords: [7.0, 171.0], country: 'MHL', note: 'COFA: US citizens visa-free 90 days' },
+            { name: 'Palau', coords: [7.5, 134.5], country: 'PLW', note: 'COFA: US citizens visa-free 90 days' },
+            // Jeju
+            { name: 'Jeju Island, Korea', coords: [33.5, 126.5], country: 'KOR', note: 'Some nationalities can visit Jeju without visa but not mainland' },
+            // China
+            { name: 'Hainan Island, China', coords: [19.5, 109.5], country: 'CHN', note: 'Visa-free for group tours from 59 countries' },
+            { name: 'Shenzhen, China', coords: [22.5, 114.0], country: 'CHN', note: '5-day visa-free for cruise passengers' },
+            // UK Common Travel Area
+            { name: 'Guernsey, UK', coords: [49.4, -2.5], country: 'GBR', note: 'Common Travel Area with UK/Ireland/Isle of Man' },
             { name: 'Jersey, UK', coords: [49.2, -2.1], country: 'GBR', note: 'Common Travel Area' },
-            { name: 'Canary Islands, Spain', coords: [28.0, -15.5], country: 'ESP', note: 'Part of Schengen' },
-            { name: 'Madeira, Portugal', coords: [32.7, -17.0], country: 'PRT', note: 'Part of Schengen' },
-            { name: 'Faroe Islands', coords: [62.0, -7.0], country: 'DNK', note: 'Part of Denmark' },
-            { name: 'Svalbard, Norway', coords: [78.0, 16.0], country: 'NOR', note: 'No visa required, unlimited stay' },
-            { name: 'Micronesia', coords: [7.5, 150.5], country: 'FSM', note: 'Compact of Free Association' },
-            { name: 'Marshall Islands', coords: [7.0, 171.0], country: 'MHL', note: 'Compact of Free Association' },
-            { name: 'French Polynesia', coords: [-17.6, -149.4], country: 'FRA', note: 'French overseas' },
-            { name: 'Bali, Indonesia', coords: [-8.5, 115.0], country: 'IDN', note: 'VOA available' },
-            { name: 'Papua, Indonesia', coords: [-3.5, 130.0], country: 'IDN', note: 'Special permit required' }
+            { name: 'Isle of Man', coords: [54.2, -4.5], country: 'GBR', note: 'Common Travel Area' },
+            { name: 'Gibraltar', coords: [36.1, -5.3], country: 'GBR', note: 'British Overseas Territory - separate from UK' },
+            // Schengen territories
+            { name: 'Canary Islands, Spain', coords: [28.0, -15.5], country: 'ESP', note: 'Part of Spain/Schengen' },
+            { name: 'Madeira, Portugal', coords: [32.7, -17.0], country: 'PRT', note: 'Part of Portugal/Schengen' },
+            { name: 'Azores, Portugal', coords: [37.7, -25.7], country: 'PRT', note: 'Part of Portugal/Schengen' },
+            // Nordic
+            { name: 'Faroe Islands', coords: [62.0, -7.0], country: 'DNK', note: 'Part of Denmark - counts to 90-day Schengen' },
+            { name: 'Greenland', coords: [72.0, -40.0], country: 'DNK', note: 'Part of Denmark - counts to 90-day Schengen' },
+            { name: 'Svalbard, Norway', coords: [78.0, 16.0], country: 'NOR', note: 'UNIQUE: No visa required, unlimited stay (Svalbard Treaty)' },
+            // French overseas
+            { name: 'French Polynesia', coords: [-17.6, -149.4], country: 'FRA', note: 'French overseas - NOT Schengen' },
+            { name: 'New Caledonia', coords: [-20.9, 165.6], country: 'FRA', note: 'French overseas - NOT Schengen' },
+            { name: 'Martinique', coords: [14.6, -61.0], country: 'FRA', note: 'French overseas - Schengen applies' },
+            { name: 'Guadeloupe', coords: [16.3, -61.5], country: 'FRA', note: 'French overseas - Schengen applies' },
+            { name: 'Reunion', coords: [-21.1, 55.5], country: 'FRA', note: 'French overseas - Schengen applies' },
+            // India restricted
+            { name: 'Ladakh, India', coords: [34.5, 77.5], country: 'IND', note: 'Inner Line Permit required' },
+            { name: 'Arunachal Pradesh', coords: [28.0, 94.0], country: 'IND', note: 'Restricted Area Permit required' },
+            { name: 'Nagaland, India', coords: [26.0, 94.5], country: 'IND', note: 'Special permit required' },
+            // Indonesia
+            { name: 'Papua, Indonesia', coords: [-3.5, 130.0], country: 'IDN', note: 'Special permit required (Surat Jalan)' },
+            // US Territories
+            { name: 'N. Mariana Islands', coords: [15.2, 145.7], country: 'USA', note: 'US territory - visa-free for US citizens' },
+            { name: 'Guam', coords: [13.4, 144.8], country: 'USA', note: 'US territory - visa-free for US citizens' },
+            // Bermuda
+            { name: 'Bermuda', coords: [32.3, -64.7], country: 'GBR', note: 'British Overseas Territory - visa-free for many' }
         ];
         
         function addSpecialZones() {

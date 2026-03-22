@@ -4,20 +4,20 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Travel Exception Map</title>
-  <meta name="google-adsense-account" content="ca-pub-5104410176069220">
-  <meta name="google-site-verification" content="W0E8RLTD75QSMHPPtQhTdMhgRKAxv3dftBPnNa2ULLM">
-  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5104410176069220"
+    <meta name="google-adsense-account" content="ca-pub-5104410176069220">
+    <meta name="google-site-verification" content="W0E8RLTD75QSMHPPtQhTdMhgRKAxv3dftBPnNa2ULLM">
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5104410176069220"
      crossorigin="anonymous"></script>
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap');
-        
+
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
         }
-        
+
         :root {
             --visa-free: #22c55e;
             --visa-on-arrival: #eab308;
@@ -29,58 +29,173 @@
             --text-primary: #f1f5f9;
             --text-secondary: #94a3b8;
         }
-        
+
         body {
             font-family: 'Outfit', sans-serif;
             background: var(--bg-dark);
             color: var(--text-primary);
             min-height: 100vh;
         }
-        
+
         header {
             background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
-            padding: 1.5rem 2rem;
+            padding: 1rem 1.5rem;
             border-bottom: 1px solid #334155;
             display: flex;
             justify-content: space-between;
             align-items: center;
             flex-wrap: wrap;
-            gap: 1rem;
+            gap: 0.75rem;
         }
-        
+
         .logo {
             display: flex;
             align-items: center;
-            gap: 0.75rem;
+            gap: 0.6rem;
         }
-        
+
         .logo-icon {
-            width: 40px;
-            height: 40px;
+            width: 36px;
+            height: 36px;
             background: linear-gradient(135deg, #22c55e, #3b82f6);
-            border-radius: 10px;
+            border-radius: 8px;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 1.5rem;
+            font-size: 1.25rem;
         }
-        
+
         .logo h1 {
-            font-size: 1.5rem;
+            font-size: 1.25rem;
             font-weight: 600;
             background: linear-gradient(90deg, #22c55e, #3b82f6);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
         }
-        
+
         .controls {
             display: flex;
-            gap: 1rem;
+            gap: 0.75rem;
             align-items: center;
             flex-wrap: wrap;
         }
-        
+
+        .search-wrapper {
+            position: relative;
+        }
+
+        .search-box {
+            background: var(--bg-card);
+            border: 1px solid #334155;
+            color: var(--text-primary);
+            padding: 0.5rem 2.5rem 0.5rem 1rem;
+            border-radius: 8px;
+            font-family: inherit;
+            font-size: 0.875rem;
+            width: 220px;
+        }
+
+        .search-box::placeholder {
+            color: var(--text-secondary);
+        }
+
+        .search-box:focus {
+            outline: none;
+            border-color: var(--evisa);
+        }
+
+        .search-clear {
+            position: absolute;
+            right: 8px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: none;
+            border: none;
+            color: var(--text-secondary);
+            cursor: pointer;
+            font-size: 1rem;
+            display: none;
+            line-height: 1;
+        }
+
+        .search-clear.visible {
+            display: block;
+        }
+
+        .search-results {
+            position: absolute;
+            top: calc(100% + 4px);
+            left: 0;
+            right: 0;
+            background: var(--bg-card);
+            border: 1px solid #334155;
+            border-radius: 8px;
+            max-height: 280px;
+            overflow-y: auto;
+            z-index: 1000;
+            display: none;
+        }
+
+        .search-results.active {
+            display: block;
+        }
+
+        .search-result-item {
+            padding: 0.6rem 1rem;
+            cursor: pointer;
+            font-size: 0.875rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid #334155;
+            transition: background 0.15s;
+        }
+
+        .search-result-item:last-child {
+            border-bottom: none;
+        }
+
+        .search-result-item:hover,
+        .search-result-item.highlighted {
+            background: #334155;
+        }
+
+        .search-result-name {
+            font-weight: 500;
+        }
+
+        .search-result-status {
+            font-size: 0.75rem;
+            padding: 0.15rem 0.5rem;
+            border-radius: 10px;
+            text-transform: uppercase;
+            font-weight: 500;
+        }
+
+        .search-no-results {
+            padding: 0.75rem 1rem;
+            color: var(--text-secondary);
+            font-size: 0.875rem;
+            text-align: center;
+        }
+
+        .passport-select {
+            background: var(--bg-card);
+            border: 1px solid #334155;
+            color: var(--text-primary);
+            padding: 0.5rem 0.75rem;
+            border-radius: 8px;
+            font-family: inherit;
+            font-size: 0.875rem;
+            cursor: pointer;
+        }
+
+        .passport-select:focus {
+            outline: none;
+            border-color: var(--evisa);
+        }
+
         .toggle-btn {
             background: var(--bg-card);
             border: 1px solid #334155;
@@ -95,28 +210,28 @@
             gap: 0.5rem;
             transition: all 0.2s;
         }
-        
+
         .toggle-btn:hover {
             background: #334155;
         }
-        
+
         .toggle-btn.active {
             background: var(--special-zone);
             border-color: var(--special-zone);
         }
-        
+
         #map {
-            height: calc(100vh - 80px);
+            height: calc(100vh - 68px);
             width: 100%;
         }
-        
+
         .legend {
             background: var(--bg-card);
             padding: 1rem;
             border-radius: 12px;
             box-shadow: 0 4px 20px rgba(0,0,0,0.3);
         }
-        
+
         .legend h3 {
             font-size: 0.875rem;
             margin-bottom: 0.75rem;
@@ -124,7 +239,7 @@
             text-transform: uppercase;
             letter-spacing: 0.05em;
         }
-        
+
         .legend-item {
             display: flex;
             align-items: center;
@@ -132,41 +247,51 @@
             margin-bottom: 0.5rem;
             font-size: 0.875rem;
         }
-        
+
         .legend-color {
             width: 20px;
             height: 20px;
             border-radius: 4px;
         }
-        
+
         .leaflet-popup-content-wrapper {
             background: var(--bg-card);
             color: var(--text-primary);
             border-radius: 12px;
             box-shadow: 0 4px 20px rgba(0,0,0,0.4);
         }
-        
+
         .leaflet-popup-tip {
             background: var(--bg-card);
         }
-        
+
         .leaflet-popup-content {
             margin: 1rem;
             min-width: 280px;
         }
-        
+
         .country-info {
             font-family: 'Outfit', sans-serif;
         }
-        
+
         .country-info h2 {
             font-size: 1.25rem;
             margin-bottom: 0.75rem;
             display: flex;
             align-items: center;
             gap: 0.5rem;
+            flex-wrap: wrap;
         }
-        
+
+        .passport-tag {
+            font-size: 0.7rem;
+            background: #334155;
+            padding: 0.1rem 0.4rem;
+            border-radius: 4px;
+            color: var(--text-secondary);
+            margin-left: 0.25rem;
+        }
+
         .status-badge {
             padding: 0.25rem 0.75rem;
             border-radius: 20px;
@@ -174,38 +299,41 @@
             font-weight: 500;
             text-transform: uppercase;
         }
-        
+
         .status-free { background: var(--visa-free); color: #000; }
         .status-arrival { background: var(--visa-on-arrival); color: #000; }
         .status-evisa { background: var(--evisa); color: #fff; }
         .status-required { background: var(--visa-required); color: #fff; }
-        
+        .status-special { background: var(--special-zone); color: #fff; }
+
         .info-grid {
             display: grid;
             gap: 0.5rem;
             margin: 1rem 0;
         }
-        
+
         .info-row {
             display: flex;
             justify-content: space-between;
             font-size: 0.875rem;
         }
-        
+
         .info-label {
             color: var(--text-secondary);
         }
-        
+
         .info-value {
             font-weight: 500;
+            text-align: right;
+            max-width: 60%;
         }
-        
+
         .special-zones {
             margin-top: 1rem;
             padding-top: 1rem;
             border-top: 1px solid #334155;
         }
-        
+
         .special-zones h4 {
             font-size: 0.875rem;
             color: var(--special-zone);
@@ -214,7 +342,7 @@
             align-items: center;
             gap: 0.5rem;
         }
-        
+
         .zone-item {
             background: rgba(168, 85, 247, 0.1);
             border: 1px solid rgba(168, 85, 247, 0.3);
@@ -223,11 +351,11 @@
             margin-bottom: 0.5rem;
             font-size: 0.8rem;
         }
-        
+
         .zone-item strong {
             color: var(--special-zone);
         }
-        
+
         .source-link {
             display: inline-block;
             margin-top: 0.75rem;
@@ -235,394 +363,736 @@
             text-decoration: none;
             font-size: 0.8rem;
         }
-        
+
         .source-link:hover {
             text-decoration: underline;
         }
-        
-        .search-box {
-            background: var(--bg-card);
-            border: 1px solid #334155;
-            color: var(--text-primary);
-            padding: 0.5rem 1rem;
-            border-radius: 8px;
-            font-family: inherit;
-            font-size: 0.875rem;
-            width: 200px;
+
+        .passport-banner {
+            background: linear-gradient(90deg, #22c55e, #3b82f6);
+            color: #000;
+            padding: 0.35rem 1rem;
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-align: center;
+            display: none;
         }
-        
-        .search-box::placeholder {
-            color: var(--text-secondary);
+
+        .passport-banner.visible {
+            display: block;
         }
-        
-        .search-box:focus {
-            outline: none;
-            border-color: var(--evisa);
-        }
-        
+
         @media (max-width: 768px) {
             header {
-                padding: 1rem;
+                padding: 0.75rem 1rem;
             }
-            
+
             .logo h1 {
-                font-size: 1.25rem;
+                font-size: 1.1rem;
             }
-            
+
             .search-box {
-                width: 100%;
+                width: 160px;
             }
-            
+
             .controls {
                 width: 100%;
-                justify-content: space-between;
+                justify-content: flex-end;
+            }
+
+            .search-wrapper {
+                order: 10;
+                width: 100%;
+            }
+
+            .search-box {
+                width: 100%;
             }
         }
     </style>
 </head>
 <body>
+    <div class="passport-banner" id="passportBanner">
+        Showing visa requirements for: <strong id="passportBannerText">All Nationalities</strong>
+    </div>
+
     <header>
         <div class="logo">
             <div class="logo-icon">🌍</div>
             <h1>Travel Exception Map</h1>
         </div>
         <div class="controls">
-            <input type="text" class="search-box" id="searchBox" placeholder="Search country...">
+            <div class="search-wrapper">
+                <input type="text" class="search-box" id="searchBox" placeholder="Search country..." autocomplete="off">
+                <button class="search-clear" id="searchClear">✕</button>
+                <div class="search-results" id="searchResults"></div>
+            </div>
+            <select class="passport-select" id="passportSelect">
+                <option value="any">😐 All Nationalities</option>
+                <option value="USA">🇺🇸 US Citizen</option>
+                <option value="PHL">🇵🇭 Filipino</option>
+                <option value="CHN">🇨🇳 Chinese</option>
+                <option value="IND">🇮🇳 Indian</option>
+                <option value="MEX">🇲🇽 Mexican</option>
+                <option value="GBR">🇬🇧 British</option>
+            </select>
             <button class="toggle-btn active" id="toggleZones">
                 <span>✨</span> Special Zones
             </button>
         </div>
     </header>
-    
+
     <div id="map"></div>
-    
+
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <script>
-        // Initialize map
-        const map = L.map('map', {
-            center: [20, 0],
-            zoom: 2,
-            minZoom: 2,
-            maxZoom: 8
-        });
-        
-        L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
-            attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OSM</a> &copy; <a href="https://carto.com/">CARTO</a>',
-            subdomains: 'abcd',
-            maxZoom: 20
-        }).addTo(map);
-        
-        // Color scheme
-        const colors = {
-            visaFree: '#22c55e',
-            visaOnArrival: '#eab308',
-            eVisa: '#3b82f6',
-            visaRequired: '#ef4444',
-            specialZone: '#a855f7'
-        };
-        
-        // Sample country data with visa status (for demo - real app would have full dataset)
+        // ─── Passport-aware country data ─────────────────────────────────────────
+        // Structure: ISO_A3 → { name, flags:{USA?: status/stay/conditions}, coords:[lat,lng] }
         const countryData = {
-            'JPN': { name: 'Japan', status: 'visa-free', stay: '90 days', conditions: 'Visa-free for tourists', lastUpdated: '2026-01-15' },
-            'KOR': { name: 'South Korea', status: 'visa-free', stay: '90 days', conditions: 'Visa-free entry', lastUpdated: '2026-01-15',
+
+            // ── Asia Pacific ──────────────────────────────────────────────────────
+            'JPN': { name: 'Japan', coords: [36.2, 138.2],
+                flags: { USA:'visa-free:90 days:No visa needed for tourism',
+                         PHL:'visa-required:0:Tourist visa required',
+                         CHN:'visa-required:0:Tourist visa required',
+                         IND:'visa-required:0:Tourist visa required',
+                         MEX:'visa-free:90 days:Visa-free for tourism',
+                         GBR:'visa-free:90 days:Visa-free for tourism' }},
+            'KOR': { name: 'South Korea', coords: [35.9, 127.8],
+                flags: { USA:'visa-free:90 days:Visa-free entry',
+                         PHL:'visa-required:0:Need C-3 visa; Jeju Island visa-free for transit',
+                         CHN:'visa-required:0:Tourist visa required',
+                         IND:'visa-required:0:Tourist visa required',
+                         MEX:'visa-free:90 days:Visa-free for tourism',
+                         GBR:'visa-free:90 days:Visa-free for tourism' },
                 specialZones: [
-                    { name: 'Jeju Island', condition: 'Filipinos can visit Jeju without visa, but not mainland Korea', coords: [33.5, 126.5] }
+                    { name: 'Jeju Island', condition: 'Filipinos in transit can visit Jeju without visa, but not mainland Korea', coords: [33.5, 126.5] }
                 ]},
-            'PHL': { name: 'Philippines', status: 'visa-free', stay: '30 days', conditions: 'Visa-free for tourism', lastUpdated: '2026-02-01' },
-            'USA': { name: 'United States', status: 'visa-required', stay: 'N/A', conditions: 'Visa required for most', lastUpdated: '2026-01-01' },
-            'GBR': { name: 'United Kingdom', status: 'visa-free', stay: '6 months', conditions: 'Visa-free for tourism', lastUpdated: '2025-12-01' },
-            'DEU': { name: 'Germany', status: 'visa-free', stay: '90 days', conditions: 'Schengen area', lastUpdated: '2025-11-01' },
-            'FRA': { name: 'France', status: 'visa-free', stay: '90 days', conditions: 'Schengen area', lastUpdated: '2025-11-01' },
-            'ITA': { name: 'Italy', status: 'visa-free', stay: '90 days', conditions: 'Schengen area', lastUpdated: '2025-11-01' },
-            'ESP': { name: 'Spain', status: 'visa-free', stay: '90 days', conditions: 'Schengen area', lastUpdated: '2025-11-01' },
-            'PRT': { name: 'Portugal', status: 'visa-free', stay: '90 days', conditions: 'Schengen area', lastUpdated: '2025-11-01' },
-            'THA': { name: 'Thailand', status: 'visa-on-arrival', stay: '15-30 days', conditions: 'VOA available at airports', lastUpdated: '2026-01-20' },
-            'VNM': { name: 'Vietnam', status: 'evisa', stay: '90 days', conditions: 'eVisa available online', lastUpdated: '2026-01-10' },
-            'MYS': { name: 'Malaysia', status: 'visa-free', stay: '90 days', conditions: 'Visa-free for tourism', lastUpdated: '2025-12-15' },
-            'SGP': { name: 'Singapore', status: 'visa-free', stay: '30-90 days', conditions: 'Visa-free transit', lastUpdated: '2026-01-05' },
-            'IDN': { name: 'Indonesia', status: 'visa-on-arrival', stay: '30 days', conditions: 'VOA available, extendable', lastUpdated: '2026-01-25',
+            'PHL': { name: 'Philippines', coords: [12.9, 121.8],
+                flags: { USA:'visa-free:30 days:Visa-free for tourism (extendable to 3 years)',
+                         PHL:'visa-free:0:Philippine citizens',
+                         CHN:'visa-required:0:Tourist visa required',
+                         IND:'visa-required:0:Tourist visa required',
+                         MEX:'visa-free:30 days:Visa-free for tourism',
+                         GBR:'visa-free:30 days:Visa-free for tourism' }},
+            'THA': { name: 'Thailand', coords: [15.9, 100.9],
+                flags: { USA:'visa-free:30 days:No visa needed; 60-day extension possible',
+                         PHL:'visa-free:30 days:Visa-free for tourism',
+                         CHN:'visa-free:30 days:Visa-free temporarily restored',
+                         IND:'visa-on-arrival:15 days:VOA at airports; extendable',
+                         MEX:'visa-free:30 days:Visa-free for tourism',
+                         GBR:'visa-free:30 days:Visa-free for tourism' }},
+            'VNM': { name: 'Vietnam', coords: [14.1, 108.3],
+                flags: { USA:'evisa:90 days:eVisa available at evisa.gov.vn',
+                         PHL:'evisa:90 days:eVisa available at evisa.gov.vn',
+                         CHN:'evisa:90 days:eVisa available at evisa.gov.vn',
+                         IND:'evisa:90 days:eVisa available at evisa.gov.vn',
+                         MEX:'visa-free:45 days:Visa-free for tourism',
+                         GBR:'evisa:90 days:eVisa required' }},
+            'MYS': { name: 'Malaysia', coords: [4.2, 108.0],
+                flags: { USA:'visa-free:90 days:Visa-free for tourism',
+                         PHL:'visa-free:30 days:Visa-free for tourism',
+                         CHN:'visa-free:30 days:Visa-free for tourism',
+                         IND:'visa-required:0:Tourist visa required',
+                         MEX:'visa-free:90 days:Visa-free for tourism',
+                         GBR:'visa-free:90 days:Visa-free for tourism' }},
+            'SGP': { name: 'Singapore', coords: [1.4, 103.8],
+                flags: { USA:'visa-free:90 days:Visa-free for tourism',
+                         PHL:'visa-free:30 days:Visa-free for tourism',
+                         CHN:'visa-free:30 days:Visa-free transit (96h)',
+                         IND:'evisa:30 days:eVisa available online',
+                         MEX:'visa-free:30 days:Visa-free for tourism',
+                         GBR:'visa-free:90 days:Visa-free for tourism' }},
+            'IDN': { name: 'Indonesia', coords: [-0.8, 113.9],
+                flags: { USA:'visa-on-arrival:30 days:VOA at airports; extendable to 60 days',
+                         PHL:'visa-on-arrival:30 days:VOA available; extendable',
+                         CHN:'visa-on-arrival:30 days:VOA at airports',
+                         IND:'visa-on-arrival:30 days:VOA available',
+                         MEX:'visa-free:30 days:Visa-free for tourism',
+                         GBR:'visa-free:30 days:Visa-free for tourism' },
                 specialZones: [
-                    { name: 'Bali & Java', condition: 'Standard VOA applies', coords: [-8.5, 115.0] },
-                    { name: 'Restricted Areas', condition: 'Some regions require special permits (Papua, Maluku)', coords: [-3.0, 128.0] }
+                    { name: 'Papua & Maluku', condition: 'Special permit (Surat Jalan) required beyond Bali/Java', coords: [-3.0, 128.0] }
                 ]},
-            'HKG': { name: 'Hong Kong', status: 'visa-free', stay: '90 days', conditions: 'Separate immigration from China', lastUpdated: '2026-01-01',
+            'KHM': { name: 'Cambodia', coords: [12.6, 105.0],
+                flags: { USA:'evisa:30 days:eVisa at evisa.gov.kh',
+                         PHL:'evisa:30 days:eVisa available',
+                         CHN:'evisa:30 days:eVisa available',
+                         IND:'evisa:30 days:eVisa available',
+                         MEX:'evisa:30 days:eVisa available',
+                         GBR:'evisa:30 days:eVisa available' }},
+            'LAO': { name: 'Laos', coords: [19.9, 102.3],
+                flags: { USA:'evisa:30 days:eVisa at evisa.laoevisa.com',
+                         PHL:'evisa:30 days:eVisa available',
+                         CHN:'evisa:30 days:eVisa available',
+                         IND:'evisa:30 days:eVisa available',
+                         MEX:'visa-free:30 days:Visa-free for tourism',
+                         GBR:'evisa:30 days:eVisa required' }},
+            'MMR': { name: 'Myanmar', coords: [21.9, 96.0],
+                flags: { USA:'evisa:28 days:eVisa at evisa.moip.gov.mm',
+                         PHL:'evisa:28 days:eVisa available',
+                         CHN:'evisa:28 days:eVisa available',
+                         IND:'evisa:28 days:eVisa available',
+                         MEX:'evisa:28 days:eVisa available',
+                         GBR:'evisa:28 days:eVisa available' }},
+            'BRN': { name: 'Brunei', coords: [4.5, 114.7],
+                flags: { USA:'visa-free:90 days:Visa-free for tourism',
+                         PHL:'visa-free:14 days:Visa-free for tourism',
+                         CHN:'visa-free:15 days:Visa-free for tourism',
+                         IND:'visa-on-arrival:30 days:VOA available',
+                         MEX:'visa-free:90 days:Visa-free for tourism',
+                         GBR:'visa-free:90 days:Visa-free for tourism' }},
+            'TLS': { name: 'Timor-Leste', coords: [-8.9, 125.9],
+                flags: { USA:'visa-on-arrival:30 days:VOA at Dili airport',
+                         PHL:'visa-on-arrival:30 days:VOA available',
+                         CHN:'visa-on-arrival:30 days:VOA available',
+                         IND:'visa-on-arrival:30 days:VOA available',
+                         MEX:'visa-on-arrival:30 days:VOA available',
+                         GBR:'visa-on-arrival:30 days:VOA available' }},
+
+            // ── Greater China ─────────────────────────────────────────────────────
+            'CHN': { name: 'China', coords: [35.9, 104.2],
+                flags: { USA:'evisa:30 days:eVisa required; apply online',
+                         PHL:'evisa:30 days:eVisa required',
+                         CHN:'visa-free:0:Chinese citizens',
+                         IND:'evisa:30 days:eVisa required',
+                         MEX:'evisa:30 days:eVisa required',
+                         GBR:'evisa:30 days:eVisa required' },
                 specialZones: [
-                    { name: 'Hong Kong SAR', condition: 'Separate visa policy from mainland China', coords: [22.3, 114.2] }
+                    { name: 'Hainan Island', condition: 'Visa-free for group tours from 59 countries incl. USA, UK, France, Germany', coords: [19.5, 109.5] },
+                    { name: 'Shenzhen SEZ', condition: '5-day visa-free transit for cruise passengers via designated ports', coords: [22.5, 114.0] }
                 ]},
-            'MAC': { name: 'Macau', status: 'visa-free', stay: '30 days', conditions: 'Separate from mainland China', lastUpdated: '2026-01-01' },
-            'CHN': { name: 'China', status: 'evisa', stay: '30-90 days', conditions: 'eVisa required for most nationalities', lastUpdated: '2026-01-15',
-                specialZones: [
-                    { name: 'Hainan Island', condition: 'Visa-free for group tours from select countries', coords: [19.5, 109.5] },
-                    { name: 'Shenzhen SEZ', condition: '5-day visa-free for cruise passengers', coords: [22.5, 114.0] }
-                ]},
-            'TWN': { name: 'Taiwan', status: 'visa-free', stay: '90 days', conditions: 'Visa-free for many nationalities', lastUpdated: '2026-01-10' },
-            'AUS': { name: 'Australia', status: 'evisa', stay: '3 months', conditions: 'ETA or eVisa required', lastUpdated: '2026-01-20' },
-            'NZL': { name: 'New Zealand', status: 'visa-free', stay: '90 days', conditions: 'Visa-waiver program', lastUpdated: '2025-12-01' },
-            'CAN': { name: 'Canada', status: 'visa-required', stay: 'N/A', conditions: 'Visa required (ETA for some)', lastUpdated: '2026-01-01' },
-            'MEX': { name: 'Mexico', status: 'visa-free', stay: '180 days', conditions: 'Visa-free for tourism (FMM required)', lastUpdated: '2026-01-05' },
-            'BRA': { name: 'Brazil', status: 'visa-free', stay: '90 days', conditions: 'Visa-free for tourism', lastUpdated: '2025-12-20' },
-            'ARG': { name: 'Argentina', status: 'visa-free', stay: '90 days', conditions: 'Visa-free for tourism', lastUpdated: '2025-11-15' },
-            'ZAF': { name: 'South Africa', status: 'visa-on-arrival', stay: '30-90 days', conditions: 'VOA available at airports', lastUpdated: '2026-01-10' },
-            'EGY': { name: 'Egypt', status: 'visa-on-arrival', stay: '30 days', conditions: 'VOA available at airports', lastUpdated: '2026-01-15' },
-            'TUR': { name: 'Turkey', status: 'evisa', stay: '30-90 days', conditions: 'eVisa available online', lastUpdated: '2026-01-20' },
-            'ARE': { name: 'UAE', status: 'visa-on-arrival', stay: '30-90 days', conditions: 'VOA for eligible nationalities', lastUpdated: '2026-01-25' },
-            'IND': { name: 'India', status: 'evisa', stay: '30-60 days', conditions: 'eVisa available online', lastUpdated: '2026-01-20' },
-            'RUS': { name: 'Russia', status: 'evisa', stay: '16 days', conditions: 'eVisa required', lastUpdated: '2026-01-15' },
-            'UKR': { name: 'Ukraine', status: 'visa-free', stay: '90 days', conditions: 'Visa-free for tourism', lastUpdated: '2025-12-01' },
-            'GRC': { name: 'Greece', status: 'visa-free', stay: '90 days', conditions: 'Schengen area', lastUpdated: '2025-11-01' },
-            'NLD': { name: 'Netherlands', status: 'visa-free', stay: '90 days', conditions: 'Schengen area', lastUpdated: '2025-11-01' },
-            'BEL': { name: 'Belgium', status: 'visa-free', stay: '90 days', conditions: 'Schengen area', lastUpdated: '2025-11-01' },
-            'CHE': { name: 'Switzerland', status: 'visa-free', stay: '90 days', conditions: 'Schengen area', lastUpdated: '2025-11-01' },
-            'AUT': { name: 'Austria', status: 'visa-free', stay: '90 days', conditions: 'Schengen area', lastUpdated: '2025-11-01' },
-            'POL': { name: 'Poland', status: 'visa-free', stay: '90 days', conditions: 'Schengen area', lastUpdated: '2025-11-01' },
-            'CZE': { name: 'Czech Republic', status: 'visa-free', stay: '90 days', conditions: 'Schengen area', lastUpdated: '2025-11-01' },
-            'SWE': { name: 'Sweden', status: 'visa-free', stay: '90 days', conditions: 'Schengen area', lastUpdated: '2025-11-01' },
-            'NOR': { name: 'Norway', status: 'visa-free', stay: '90 days', conditions: 'Schengen area', lastUpdated: '2025-11-01' },
-            'DNK': { name: 'Denmark', status: 'visa-free', stay: '90 days', conditions: 'Schengen area', lastUpdated: '2025-11-01' },
-            'FIN': { name: 'Finland', status: 'visa-free', stay: '90 days', conditions: 'Schengen area', lastUpdated: '2025-11-01' },
-            'IRL': { name: 'Ireland', status: 'visa-free', stay: '90 days', conditions: 'Separate from UK Schengen', lastUpdated: '2025-12-01' },
-            
-            // Special territories
-            'GBR-CA': { name: 'Guernsey (UK)', status: 'special', stay: 'Visa-free', conditions: 'Part of Common Travel Area', lastUpdated: '2026-01-01', parent: 'GBR' },
-            'GBR-JE': { name: 'Jersey (UK)', status: 'special', stay: 'Visa-free', conditions: 'Part of Common Travel Area', lastUpdated: '2026-01-01', parent: 'GBR' },
-            'ESP-IC': { name: 'Canary Islands', status: 'special', stay: '90 days', conditions: 'Part of Spain/Schengen', lastUpdated: '2026-01-01', parent: 'ESP' },
-            'PRT-MA': { name: 'Madeira', status: 'special', stay: '90 days', conditions: 'Part of Portugal/Schengen', lastUpdated: '2026-01-01', parent: 'PRT' },
-            'FRA-PF': { name: 'French Polynesia', status: 'visa-free', stay: '90 days', conditions: 'French overseas territory', lastUpdated: '2026-01-01', parent: 'FRA' },
-            'USA-HI': { name: 'Hawaii', status: 'visa-free', stay: '90 days', conditions: 'Part of USA', lastUpdated: '2026-01-01', parent: 'USA' },
-            'USA-PR': { name: 'Puerto Rico', status: 'visa-free', stay: '90 days', conditions: 'US territory', lastUpdated: '2026-01-01', parent: 'USA' },
-            'AUS-CC': { name: 'Cocos Islands', status: 'visa-free', stay: '90 days', conditions: 'Australian territory', lastUpdated: '2026-01-01', parent: 'AUS' },
-            'CHN-HN': { name: 'Hainan Island', status: 'visa-free', stay: '30 days', conditions: 'Visa-free for group tours', lastUpdated: '2026-01-15', parent: 'CHN' },
-            'DNK-FO': { name: 'Faroe Islands', status: 'visa-free', stay: '90 days', conditions: 'Part of Denmark', lastUpdated: '2026-01-01', parent: 'DNK' },
-            'NOR-SJ': { name: 'Svalbard', status: 'visa-free', stay: 'Unlimited', conditions: 'No visa required', lastUpdated: '2026-01-01', parent: 'NOR' },
-            
-            // Micronesian special cases
-            'FSM': { name: 'Federated States of Micronesia', status: 'special', stay: '30 days', conditions: 'Visa-free entry under Compact of Free Association', lastUpdated: '2026-01-01' },
-            'MHL': { name: 'Marshall Islands', status: 'special', stay: '90 days', conditions: 'Visa-free under Compact of Free Association', lastUpdated: '2026-01-01' },
-            'PLW': { name: 'Palau', status: 'visa-free', stay: '90 days', conditions: 'Visa-free for many nationalities', lastUpdated: '2026-01-01' }
-        };
-        
-        // Special zones layer
-        const specialZonesLayer = L.layerGroup().addTo(map);
-        let showSpecialZones = true;
-        
-        // Add special zone markers
-        const specialZones = [
-            // SARs
-            { name: 'Hong Kong SAR', coords: [22.3, 114.2], country: 'HKG', note: 'Separate immigration from China - 90 days for many' },
-            { name: 'Macau SAR', coords: [22.2, 113.5], country: 'MAC', note: 'Separate visa policy - 30 days for many' },
-            // COFA Nations
-            { name: 'Micronesia', coords: [7.5, 150.5], country: 'FSM', note: 'COFA: US citizens visa-free 30 days' },
-            { name: 'Marshall Islands', coords: [7.0, 171.0], country: 'MHL', note: 'COFA: US citizens visa-free 90 days' },
-            { name: 'Palau', coords: [7.5, 134.5], country: 'PLW', note: 'COFA: US citizens visa-free 90 days' },
-            // Jeju
-            { name: 'Jeju Island, Korea', coords: [33.5, 126.5], country: 'KOR', note: 'Some nationalities can visit Jeju without visa but not mainland' },
-            // China
-            { name: 'Hainan Island, China', coords: [19.5, 109.5], country: 'CHN', note: 'Visa-free for group tours from 59 countries' },
-            { name: 'Shenzhen, China', coords: [22.5, 114.0], country: 'CHN', note: '5-day visa-free for cruise passengers' },
-            // UK Common Travel Area
-            { name: 'Guernsey, UK', coords: [49.4, -2.5], country: 'GBR', note: 'Common Travel Area with UK/Ireland/Isle of Man' },
-            { name: 'Jersey, UK', coords: [49.2, -2.1], country: 'GBR', note: 'Common Travel Area' },
-            { name: 'Isle of Man', coords: [54.2, -4.5], country: 'GBR', note: 'Common Travel Area' },
-            { name: 'Gibraltar', coords: [36.1, -5.3], country: 'GBR', note: 'British Overseas Territory - separate from UK' },
-            // Schengen territories
-            { name: 'Canary Islands, Spain', coords: [28.0, -15.5], country: 'ESP', note: 'Part of Spain/Schengen' },
-            { name: 'Madeira, Portugal', coords: [32.7, -17.0], country: 'PRT', note: 'Part of Portugal/Schengen' },
-            { name: 'Azores, Portugal', coords: [37.7, -25.7], country: 'PRT', note: 'Part of Portugal/Schengen' },
-            // Nordic
-            { name: 'Faroe Islands', coords: [62.0, -7.0], country: 'DNK', note: 'Part of Denmark - counts to 90-day Schengen' },
-            { name: 'Greenland', coords: [72.0, -40.0], country: 'DNK', note: 'Part of Denmark - counts to 90-day Schengen' },
-            { name: 'Svalbard, Norway', coords: [78.0, 16.0], country: 'NOR', note: 'UNIQUE: No visa required, unlimited stay (Svalbard Treaty)' },
-            // French overseas
-            { name: 'French Polynesia', coords: [-17.6, -149.4], country: 'FRA', note: 'French overseas - NOT Schengen' },
-            { name: 'New Caledonia', coords: [-20.9, 165.6], country: 'FRA', note: 'French overseas - NOT Schengen' },
-            { name: 'Martinique', coords: [14.6, -61.0], country: 'FRA', note: 'French overseas - Schengen applies' },
-            { name: 'Guadeloupe', coords: [16.3, -61.5], country: 'FRA', note: 'French overseas - Schengen applies' },
-            { name: 'Reunion', coords: [-21.1, 55.5], country: 'FRA', note: 'French overseas - Schengen applies' },
-            // India restricted
-            { name: 'Ladakh, India', coords: [34.5, 77.5], country: 'IND', note: 'Inner Line Permit required' },
-            { name: 'Arunachal Pradesh', coords: [28.0, 94.0], country: 'IND', note: 'Restricted Area Permit required' },
-            { name: 'Nagaland, India', coords: [26.0, 94.5], country: 'IND', note: 'Special permit required' },
-            // Indonesia
-            { name: 'Papua, Indonesia', coords: [-3.5, 130.0], country: 'IDN', note: 'Special permit required (Surat Jalan)' },
-            // US Territories
-            { name: 'N. Mariana Islands', coords: [15.2, 145.7], country: 'USA', note: 'US territory - visa-free for US citizens' },
-            { name: 'Guam', coords: [13.4, 144.8], country: 'USA', note: 'US territory - visa-free for US citizens' },
-            // Bermuda
-            { name: 'Bermuda', coords: [32.3, -64.7], country: 'GBR', note: 'British Overseas Territory - visa-free for many' }
+            'HKG': { name: 'Hong Kong SAR', coords: [22.3, 114.2],
+                flags: { USA:'visa-free:90 days:Visa-free; separate immigration from mainland',
+                         PHL:'visa-free:14 days:Visa-free for tourism',
+                         CHN:'visa-free:0:Hong Kong residents',
+                         IND:'evisa:30 days:eVisa available',
+                         MEX:'visa-free:90 days:Visa-free for tourism',
+                         GBR:'visa-free:180 days:Visa-free; BNO holders get 6 months' }},
+            'MAC': { name: 'Macau SAR', coords: [22.2, 113.5],
+                flags: { USA:'visa-free:90 days:Visa-free; separate immigration',
+                         PHL:'visa-free:30 days:Visa-free for tourism',
+                         CHN:'visa-free:0:Macau residents',
+                         IND:'evisa:30 days:eVisa available',
+                         MEX:'visa-free:90 days:Visa-free for tourism',
+                         GBR:'visa-free:90 days:Visa-free for tourism' }},
+            'TWN': { name: 'Taiwan', coords: [23.7, 121.0],
+                flags: { USA:'visa-free:90 days:Visa-free for tourism',
+                         PHL:'visa-free:90 days:Visa-free for tourism',
+                         CHN:'visa-required:0:PRC citizens require permit',
+                         IND:'evisa:30 days:eVisa available',
+                         MEX:'visa-free:90 days:Visa-free for tourism',
+                         GBR:'visa-free:90 days:Visa-free for tourism' }},
+
+            // ── Americas ─────────────────────────────────────────────────────────
+            'USA': { name: 'United States', coords: [37.1, -95.7],
+                flags: { USA:'visa-free:0:US citizens',
+                         PHL:'visa-required:0:K-1 fiancé visa; tourist B2 visa required',
+                         CHN:'visa-required:0:B1/B2 visa required',
+                         IND:'visa-required:0:B1/B2 visa required',
+                         MEX:'visa-free:180 days:Visa-free via ESTA (B1/B2)',
+                         GBR:'visa-free:90 days:Visa-free via ESTA (B1/B2)' }},
+            'MEX': { name: 'Mexico', coords: [23.6, -102.6],
+                flags: { USA:'visa-free:180 days:Visa-free; FMM tourist card required',
+                         PHL:'visa-free:180 days:Visa-free for tourism',
+                         CHN:'visa-free:180 days:Visa-free for tourism',
+                         IND:'visa-free:180 days:Visa-free for tourism',
+                         MEX:'visa-free:0:Mexican citizens',
+                         GBR:'visa-free:180 days:Visa-free for tourism' }},
+            'CAN': { name: 'Canada', coords: [56.1, -106.3],
+                flags: { USA:'visa-free:180 days:Visa-free; eTA required ($7 CAD)',
+                         PHL:'visa-required:0:Visitor visa required',
+                         CHN:'visa-required:0:Visitor visa required',
+                         IND:'visa-required:0:Visitor visa required',
+                         MEX:'visa-free:180 days:Visa-free; eTA required',
+                         GBR:'visa-free:180 days:Visa-free; eTA required' }},
+            'BRA': { name: 'Brazil', coords: [-14.2, -51.9],
+                flags: { USA:'visa-free:90 days:Visa-free for tourism; extendable',
+                         PHL:'visa-free:90 days:Visa-free for tourism',
+                         CHN:'evisa:90 days:eVisa available',
+                         IND:'evisa:90 days:eVisa available',
+                         MEX:'visa-free:90 days:Visa-free for tourism',
+                         GBR:'visa-free:90 days:Visa-free for tourism' }},
+            'ARG': { name: 'Argentina', coords: [-38.4, -63.6],
+                flags: { USA:'evisa:90 days:eTA (AVE) required; $100 USD',
+                         PHL:'visa-required:0:Tourist visa required',
+                         CHN:'evisa:90 days:eVisa available',
+                         IND:'visa-required:0:Tourist visa required',
+                         MEX:'visa-free:90 days:Visa-free for tourism',
+                         GBR:'visa-free:90 days:Visa-free for tourism' }},
+            'COL': { name: 'Colombia', coords: [4.6, -74.1],
+                flags: { USA:'visa-free:180 days:Visa-free for tourism',
+                         PHL:'visa-free:180 days:Visa-free for tourism',
+                         CHN:'visa-free:90 days:Visa-free for tourism',
+                         IND:'visa-free:90 days:Visa-free for tourism',
+                         MEX:'visa-free:90 days:Visa-free for tourism',
+                         GBR:'visa-free:90 days:Visa-free for tourism' }},
+            'PER': { name: 'Peru', coords: [-9.2, -75.0],
+                flags: { USA:'visa-free:183 days:Visa-free for tourism',
+                         PHL:'visa-free:183 days:Visa-free for tourism',
+                         CHN:'visa-free:180 days:Visa-free for tourism',
+                         IND:'visa-free:180 days:Visa-free for tourism',
+                         MEX:'visa-free:180 days:Visa-free for tourism',
+                         GBR:'visa-free:183 days:Visa-free for tourism' }},
+            'CHL': { name: 'Chile', coords: [-35.7, -71.5],
+                flags: { USA:'visa-free:90 days:Visa-free;can extend to 180',
+                         PHL:'visa-free:90 days:Visa-free for tourism',
+                         CHN:'evisa:90 days:eVisa required',
+                         IND:'visa-required:0:Tourist visa required',
+                         MEX:'visa-free:90 days:Visa-free for tourism',
+                         GBR:'visa-free:90 days:Visa-free for tourism' }},
+            'ECU': { name: 'Ecuador', coords: [-1.8, -78.2],
+                flags: { USA:'visa-free:90 days:Visa-free for tourism',
+                         PHL:'visa-free:90 days:Visa-free for tourism',
+                         CHN:'visa-free:90 days:Visa-free for tourism',
+                         IND:'visa-free:90 days:Visa-free for tourism',
+                         MEX:'visa-free:90 days:Visa-free for tourism',
+                         GBR:'visa-free:90 days:Visa-free for tourism' }},
+            'BOL': { name: 'Bolivia', coords: [-16.3, -63.6],
+                flags: { USA:'visa-on-arrival:90 days:VOA at airports; $30-$100 USD',
+                         PHL:'visa-on-arrival:90 days:VOA available',
+                         CHN:'visa-required:0:Tourist visa required',
+                         IND:'visa-required:0:Tourist visa required',
+                         MEX:'visa-on-arrival:90 days:VOA available',
+                         GBR:'visa-on-arrival:90 days:VOA available' }},
+            'GTM': { name: 'Guatemala', coords: [15.8, -90.2],
+                flags: { USA:'visa-free:90 days:Visa-free for tourism',
+                         PHL:'visa-free:90 days:Visa-free for tourism',
+                         CHN:'visa-free:90 days:Visa-free for tourism',
+                         IND:'visa-free:90 days:Visa-free for tourism',
+                         MEX:'visa-free:90 days:Visa-free for tourism',
+                         GBR:'visa-free:90 days:Visa-free for tourism' }},
+            'CRI': { name: 'Costa Rica', coords: [9.7, -83.8],
+                flags: { USA:'visa-free:90 days:Visa-free for tourism',
+                         PHL:'visa-free:30 days:Visa-free for tourism',
+                         CHN:'visa-required:0:Tourist visa required',
+                         IND:'visa-required:0:Tourist visa required',
+                         MEX:'visa-free:90 days:Visa-free for tourism',
+                         GBR:'visa-free:30 days:Visa-free for tourism' }},
+            'PAN': { name: 'Panama', coords: [8.5, -80.8],
+                flags: { USA:'visa-free:180 days:Visa-free for tourism',
+                         PHL:'visa-free:30 days:Visa-free for tourism',
+                         CHN:'visa-required:0:Tourist visa required',
+                         IND:'visa-required:0:Tourist visa required',
+                         MEX:'visa-free:180 days:Visa-free for tourism',
+                         GBR:'visa-free:180 days:Visa-free for tourism' }},
+
+            // ── Europe ───────────────────────────────────────────────────────────
+            'GBR': { name: 'United Kingdom', coords: [54.0, -2.0],
+                flags: { USA:'visa-free:90 days:Visa-free; separate from Schengen',
+                         PHL:'visa-required:0:Standard Visitor visa required',
+                         CHN:'visa-required:0:Standard Visitor visa required',
+                         IND:'visa-required:0:Standard Visitor visa required',
+                         MEX:'visa-free:180 days:Visa-free for tourism',
+                         GBR:'visa-free:0:British citizens' }},
+            'IRL': { name: 'Ireland', coords: [53.1, -7.7],
+                flags: { USA:'visa-free:90 days:Visa-free; separate from UK',
+                         PHL:'visa-required:0:Short-stay visa required',
+                         CHN:'visa-required:0:Short-stay visa required',
+                         IND:'visa-required:0:Short-stay visa required',
+                         MEX:'visa-free:90 days:Visa-free for tourism',
+                         GBR:'visa-free:90 days:Visa-free; CTA with UK' }},
+            'FRA': { name: 'France', coords: [46.2, 2.2],
+                flags: { USA:'visa-free:90 days:Schengen area; 90 days in any 180-day period',
+                         PHL:'visa-required:0:Schengen visa required',
+                         CHN:'visa-required:0:Schengen visa required',
+                         IND:'visa-required:0:Schengen visa required',
+                         MEX:'visa-free:90 days:Visa-free; Schengen rules apply',
+                         GBR:'visa-free:90 days:Visa-free; 90 days in any 180-day period' }},
+            'DEU': { name: 'Germany', coords: [51.2, 10.5],
+                flags: { USA:'visa-free:90 days:Schengen area',
+                         PHL:'visa-required:0:Schengen visa required',
+                         CHN:'visa-required:0:Schengen visa required',
+                         IND:'visa-required:0:Schengen visa required',
+                         MEX:'visa-free:90 days:Visa-free; Schengen rules apply',
+                         GBR:'visa-free:90 days:Visa-free; Schengen rules apply' }},
+            'ITA': { name: 'Italy', coords: [41.9, 12.6],
+                flags: { USA:'visa-free:90 days:Schengen area',
+                         PHL:'visa-required:0:Schengen visa required',
+                         CHN:'visa-required:0:Schengen visa required',
+                         IND:'visa-required:0:Schengen visa required',
+                         MEX:'visa-free:90 days:Visa-free; Schengen rules apply',
+                         GBR:'visa-free:90 days:Visa-free; Schengen rules apply' }},
+            'ESP': { name: 'Spain', coords: [40.5, -3.7],
+                flags: { USA:'visa-free:90 days:Schengen area',
+                         PHL:'visa-required:0:Schengen visa required',
+                         CHN:'visa-required:0:Schengen visa required',
+                         IND:'visa-required:0:Schengen visa required',
+                         MEX:'visa-free:90 days:Visa-free; Schengen rules apply',
+                         GBR:'visa-free:90 days:Visa-free; Schengen rules apply' }},
+            'PRT': { name: 'Portugal', coords: [39.4, -8.2],
+                flags: { USA:'visa-free:90 days:Schengen area',
+                         PHL:'visa-required:0:Schengen visa required',
+                         CHN:'visa-required:0:Schengen visa required',
+                         IND:'visa-required:0:Schengen visa required',
+                         MEX:'visa-free:90 days:Visa-free; Schengen rules apply',
+                         GBR:'visa-free:90 days:Visa-free; Schengen rules apply' }},
+            'NLD': { name: 'Netherlands', coords: [52.1, 5.3],
+                flags: { USA:'visa-free:90 days:Schengen area',
+                         PHL:'visa-required:0:Schengen visa required',
+                         CHN:'visa-required:0:Schengen visa required',
+                         IND:'visa-required:0:Schengen visa required',
+                         MEX:'visa-free:90 days:Visa-free; Schengen rules apply',
+                         GBR:'visa-free:90 days:Visa-free; Schengen rules apply' }},
+            'GRC': { name: 'Greece', coords: [39.1, 21.8],
+                flags: { USA:'visa-free:90 days:Schengen area',
+                         PHL:'visa-required:0:Schengen visa required',
+                         CHN:'visa-required:0:Schengen visa required',
+                         IND:'visa-required:0:Schengen visa required',
+                         MEX:'visa-free:90 days:Visa-free; Schengen rules apply',
+                         GBR:'visa-free:90 days:Visa-free; Schengen rules apply' }},
+
+            'CHE': { name: 'Switzerland', coords: [46.8, 8.2],
+                flags: { USA:'visa-free:90 days:Schengen area', PHL:'visa-required:0:Schengen visa required', CHN:'visa-required:0:Schengen visa required', IND:'visa-required:0:Schengen visa required', MEX:'visa-free:90 days:Visa-free; Schengen rules apply', GBR:'visa-free:90 days:Visa-free; Schengen rules apply' }},
+            'AUT': { name: 'Austria', coords: [47.5, 14.6],
+                flags: { USA:'visa-free:90 days:Schengen area', PHL:'visa-required:0:Schengen visa required', CHN:'visa-required:0:Schengen visa required', IND:'visa-required:0:Schengen visa required', MEX:'visa-free:90 days:Visa-free; Schengen rules apply', GBR:'visa-free:90 days:Visa-free; Schengen rules apply' }},
+            'BEL': { name: 'Belgium', coords: [50.5, 4.5],
+                flags: { USA:'visa-free:90 days:Schengen area', PHL:'visa-required:0:Schengen visa required', CHN:'visa-required:0:Schengen visa required', IND:'visa-required:0:Schengen visa required', MEX:'visa-free:90 days:Visa-free; Schengen rules apply', GBR:'visa-free:90 days:Visa-free; Schengen rules apply' }},
+            'POL': { name: 'Poland', coords: [51.9, 19.1],
+                flags: { USA:'visa-free:90 days:Schengen area', PHL:'visa-required:0:Schengen visa required', CHN:'visa-required:0:Schengen visa required', IND:'visa-required:0:Schengen visa required', MEX:'visa-free:90 days:Visa-free; Schengen rules apply', GBR:'visa-free:90 days:Visa-free; Schengen rules apply' }},
+            'SWE': { name: 'Sweden', coords: [60.1, 18.6],
+                flags: { USA:'visa-free:90 days:Schengen area', PHL:'visa-required:0:Schengen visa required', CHN:'visa-required:0:Schengen visa required', IND:'visa-required:0:Schengen visa required', MEX:'visa-free:90 days:Visa-free; Schengen rules apply', GBR:'visa-free:90 days:Visa-free; Schengen rules apply' }},
+            'NOR': { name: 'Norway', coords: [60.5, 8.5],
+                flags: { USA:'visa-free:90 days:Schengen area', PHL:'visa-required:0:Schengen visa required', CHN:'visa-required:0:Schengen visa required', IND:'visa-required:0:Schengen visa required', MEX:'visa-free:90 days:Visa-free; Schengen rules apply', GBR:'visa-free:90 days:Visa-free; Schengen rules apply' }},
+            'DNK': { name: 'Denmark', coords: [56.3, 9.5],
+                flags: { USA:'visa-free:90 days:Schengen area', PHL:'visa-required:0:Schengen visa required', CHN:'visa-required:0:Schengen visa required', IND:'visa-required:0:Schengen visa required', MEX:'visa-free:90 days:Visa-free; Schengen rules apply', GBR:'visa-free:90 days:Visa-free; Schengen rules apply' }},
+            'FIN': { name: 'Finland', coords: [61.9, 26.0],
+                flags: { USA:'visa-free:90 days:Schengen area', PHL:'visa-required:0:Schengen visa required', CHN:'visa-required:0:Schengen visa required', IND:'visa-required:0:Schengen visa required', MEX:'visa-free:90 days:Visa-free; Schengen rules apply', GBR:'visa-free:90 days:Visa-free; Schengen rules apply' }},
+            'CZE': { name: 'Czech Republic', coords: [49.8, 15.5],
+                flags: { USA:'visa-free:90 days:Schengen area', PHL:'visa-required:0:Schengen visa required', CHN:'visa-required:0:Schengen visa required', IND:'visa-required:0:Schengen visa required', MEX:'visa-free:90 days:Visa-free; Schengen rules apply', GBR:'visa-free:90 days:Visa-free; Schengen rules apply' }},
+            'HUN': { name: 'Hungary', coords: [47.2, 19.5],
+                flags: { USA:'visa-free:90 days:Schengen area', PHL:'visa-required:0:Schengen visa required', CHN:'visa-required:0:Schengen visa required', IND:'visa-required:0:Schengen visa required', MEX:'visa-free:90 days:Visa-free; Schengen rules apply', GBR:'visa-free:90 days:Visa-free; Schengen rules apply' }},
+            'ROU': { name: 'Romania', coords: [45.9, 25.0],
+                flags: { USA:'visa-free:90 days:not in Schengen; 90 in any 180-day period', PHL:'visa-required:0:Tourist visa required', CHN:'visa-required:0:Tourist visa required', IND:'visa-required:0:Tourist visa required', MEX:'visa-free:90 days:Visa-free for tourism', GBR:'visa-free:90 days:Visa-free for tourism' }},
+            'BGR': { name: 'Bulgaria', coords: [42.7, 25.5],
+                flags: { USA:'visa-free:90 days:not in Schengen; 90 in any 180-day period', PHL:'visa-required:0:Tourist visa required', CHN:'visa-required:0:Tourist visa required', IND:'visa-required:0:Tourist visa required', MEX:'visa-free:90 days:Visa-free for tourism', GBR:'visa-free:90 days:Visa-free for tourism' }},
+            'HRV': { name: 'Croatia', coords: [45.1, 15.2],
+                flags: { USA:'visa-free:90 days:not in Schengen; 90 in any 180-day period', PHL:'visa-required:0:Tourist visa required', CHN:'visa-required:0:Tourist visa required', IND:'visa-required:0:Tourist visa required', MEX:'visa-free:90 days:Visa-free for tourism', GBR:'visa-free:90 days:Visa-free for tourism' }},
+            'SVN': { name: 'Slovenia', coords: [46.1, 14.8],
+                flags: { USA:'visa-free:90 days:Schengen area', PHL:'visa-required:0:Schengen visa required', CHN:'visa-required:0:Schengen visa required', IND:'visa-required:0:Schengen visa required', MEX:'visa-free:90 days:Visa-free; Schengen rules apply', GBR:'visa-free:90 days:Visa-free; Schengen rules apply' }},
+            'SVK': { name: 'Slovakia', coords: [48.7, 19.7],
+                flags: { USA:'visa-free:90 days:Schengen area', PHL:'visa-required:0:Schengen visa required', CHN:'visa-required:0:Schengen visa required', IND:'visa-required:0:Schengen visa required', MEX:'visa-free:90 days:Visa-free; Schengen rules apply', GBR:'visa-free:90 days:Visa-free; Schengen rules apply' }},
+            'TUR': { name: 'Turkey', coords: [38.9, 35.2],
+                flags: { USA:'evisa:90 days:eVisa at evisa.gov.tr', PHL:'evisa:30 days:eVisa available', CHN:'evisa:30 days:eVisa available', IND:'evisa:30 days:eVisa available', MEX:'evisa:90 days:eVisa available', GBR:'evisa:90 days:eVisa available' }},
+            'ARE': { name: 'UAE', coords: [23.4, 53.8],
+                flags: { USA:'visa-free:90 days:Visa-free for tourism', PHL:'visa-on-arrival:30 days:VOA available', CHN:'evisa:30 days:eVisa available', IND:'evisa:30 days:eVisa available', MEX:'visa-free:90 days:Visa-free for tourism', GBR:'visa-free:30 days:Visa-free for tourism' }},
+            'ISR': { name: 'Israel', coords: [31.0, 34.9],
+                flags: { USA:'visa-free:90 days:Visa-free for tourism', PHL:'visa-free:90 days:Visa-free for tourism', CHN:'visa-required:0:Tourist visa required', IND:'visa-required:0:Tourist visa required', MEX:'visa-free:90 days:Visa-free for tourism', GBR:'visa-free:90 days:Visa-free for tourism' }},
+            'IND': { name: 'India', coords: [20.6, 78.9],
+                flags: { USA:'evisa:30 days:eVisa at indianvisaonline.gov.in', PHL:'evisa:30 days:eVisa available', CHN:'evisa:30 days:eVisa available', IND:'visa-free:0:Indian citizens', MEX:'evisa:30 days:eVisa available', GBR:'evisa:30 days:eVisa available' },
+                specialZones: [{name:'Ladakh',condition:'Inner Line Permit required',coords:[34.5,77.5]},{name:'Arunachal Pradesh',condition:'Restricted Area Permit required',coords:[28.0,94.0]},{name:'Nagaland & Sikkim',condition:'Special Protected Area Permits',coords:[26.0,94.5]}]},
+            'PAK': { name: 'Pakistan', coords: [30.4, 69.3],
+                flags: { USA:'evisa:30 days:eVisa available', PHL:'visa-required:0:Tourist visa required', CHN:'evisa:30 days:eVisa available', IND:'visa-required:0:Tourist visa required', MEX:'visa-required:0:Tourist visa required', GBR:'evisa:30 days:eVisa available' }},
+            'KAZ': { name: 'Kazakhstan', coords: [48.0, 66.9],
+                flags: { USA:'evisa:30 days:eVisa available', PHL:'visa-required:0:Tourist visa required', CHN:'evisa:30 days:eVisa available', IND:'visa-required:0:Tourist visa required', MEX:'visa-required:0:Tourist visa required', GBR:'visa-required:0:Tourist visa required' }},
+            'UZB': { name: 'Uzbekistan', coords: [41.4, 64.6],
+                flags: { USA:'evisa:30 days:eVisa at evisa.gov.uz', PHL:'evisa:30 days:eVisa available', CHN:'evisa:30 days:eVisa available', IND:'evisa:30 days:eVisa available', MEX:'visa-required:0:Tourist visa required', GBR:'evisa:30 days:eVisa available' }},
+            'ZAF': { name: 'South Africa', coords: [-30.6, 22.9],
+                flags: { USA:'visa-free:90 days:Visa-free for tourism', PHL:'visa-required:0:Tourist visa required', CHN:'visa-required:0:Tourist visa required', IND:'visa-required:0:Tourist visa required', MEX:'visa-free:90 days:Visa-free for tourism', GBR:'visa-free:30 days:Visa-free for tourism' }},
+            'EGY': { name: 'Egypt', coords: [26.8, 30.8],
+                flags: { USA:'visa-on-arrival:30 days:VOA at airports', PHL:'visa-on-arrival:30 days:VOA available', CHN:'visa-on-arrival:30 days:VOA available', IND:'visa-on-arrival:30 days:VOA available', MEX:'visa-on-arrival:30 days:VOA available', GBR:'visa-on-arrival:30 days:VOA available' }},
+            'MAR': { name: 'Morocco', coords: [31.8, -7.1],
+                flags: { USA:'visa-free:90 days:Visa-free for tourism', PHL:'visa-free:90 days:Visa-free for tourism', CHN:'visa-free:90 days:Visa-free for tourism', IND:'visa-required:0:Tourist visa required', MEX:'visa-free:90 days:Visa-free for tourism', GBR:'visa-free:90 days:Visa-free for tourism' }},
+            'KEN': { name: 'Kenya', coords: [-0.0, 37.9],
+                flags: { USA:'evisa:90 days:eTA at evisa.go.ke', PHL:'evisa:90 days:eTA available', CHN:'evisa:90 days:eTA available', IND:'evisa:90 days:eTA available', MEX:'evisa:90 days:eTA available', GBR:'evisa:90 days:eTA available' }},
+            'TZA': { name: 'Tanzania', coords: [-6.4, 34.9],
+                flags: { USA:'visa-on-arrival:90 days:VOA at airports', PHL:'visa-on-arrival:90 days:VOA available', CHN:'visa-on-arrival:90 days:VOA available', IND:'visa-on-arrival:90 days:VOA available', MEX:'visa-on-arrival:90 days:VOA available', GBR:'visa-on-arrival:90 days:VOA available' }},
+            'NGA': { name: 'Nigeria', coords: [9.1, 8.7],
+                flags: { USA:'evisa:90 days:eVisa available', PHL:'evisa:90 days:eVisa available', CHN:'evisa:90 days:eVisa available', IND:'evisa:90 days:eVisa available', MEX:'visa-required:0:Tourist visa required', GBR:'evisa:90 days:eVisa available' }},
+            'ETH': { name: 'Ethiopia', coords: [9.1, 40.5],
+                flags: { USA:'evisa:90 days:eVisa available', PHL:'evisa:90 days:eVisa available', CHN:'evisa:90 days:eVisa available', IND:'evisa:90 days:eVisa available', MEX:'evisa:90 days:eVisa available', GBR:'evisa:90 days:eVisa available' }},
+            'GHA': { name: 'Ghana', coords: [7.9, -1.0],
+                flags: { USA:'visa-on-arrival:30 days:VOA available', PHL:'visa-on-arrival:30 days:VOA available', CHN:'visa-required:0:Tourist visa required', IND:'visa-required:0:Tourist visa required', MEX:'visa-on-arrival:30 days:VOA available', GBR:'visa-free:90 days:Visa-free for tourism' }},
+            'SEN': { name: 'Senegal', coords: [14.5, -14.5],
+                flags: { USA:'visa-free:90 days:Visa-free for tourism', PHL:'visa-free:90 days:Visa-free for tourism', CHN:'visa-free:90 days:Visa-free for tourism', IND:'visa-free:90 days:Visa-free for tourism', MEX:'visa-free:90 days:Visa-free for tourism', GBR:'visa-free:90 days:Visa-free for tourism' }},
+            'RWA': { name: 'Rwanda', coords: [-1.9, 29.9],
+                flags: { USA:'evisa:30 days:eVisa available', PHL:'evisa:30 days:eVisa available', CHN:'evisa:30 days:eVisa available', IND:'evisa:30 days:eVisa available', MEX:'evisa:30 days:eVisa available', GBR:'evisa:30 days:eVisa available' }},
+            'AUS': { name: 'Australia', coords: [-25.3, 133.8],
+                flags: { USA:'evisa:90 days:ETA via app', PHL:'evisa:90 days:eVisitor visa (free)', CHN:'evisa:90 days:eVisa (subclass 600)', IND:'evisa:90 days:eVisa (subclass 600)', MEX:'evisa:90 days:eVisa (subclass 600)', GBR:'evisa:90 days:eVisitor visa (free)' }},
+            'NZL': { name: 'New Zealand', coords: [-40.9, 174.9],
+                flags: { USA:'visa-free:90 days:NZeTA required', PHL:'evisa:90 days:eVisa required', CHN:'evisa:30 days:eVisa required', IND:'evisa:60 days:eVisa required', MEX:'visa-free:90 days:NZeTA required', GBR:'visa-free:90 days:NZeTA required' }},
+            'FSM': { name: 'Micronesia', coords: [7.5, 150.5],
+                flags: { USA:'visa-free:30 days:COFA - no visa required', PHL:'visa-required:0:Tourist visa required', CHN:'visa-required:0:Tourist visa required', IND:'visa-required:0:Tourist visa required', MEX:'visa-required:0:Tourist visa required', GBR:'visa-required:0:Tourist visa required' }},
+            'MHL': { name: 'Marshall Islands', coords: [7.0, 171.0],
+                flags: { USA:'visa-free:90 days:COFA - no visa required', PHL:'visa-required:0:Tourist visa required', CHN:'visa-required:0:Tourist visa required', IND:'visa-required:0:Tourist visa required', MEX:'visa-required:0:Tourist visa required', GBR:'visa-required:0:Tourist visa required' }},
+            'PLW': { name: 'Palau', coords: [7.5, 134.5],
+                flags: { USA:'visa-free:90 days:Visa-free for US citizens', PHL:'visa-free:90 days:Visa-free', CHN:'visa-free:90 days:Visa-free', IND:'visa-free:90 days:Visa-free', MEX:'visa-free:90 days:Visa-free', GBR:'visa-free:90 days:Visa-free' }},
+            'MNP': { name: 'N. Mariana Islands (USA)', coords: [15.2, 145.7],
+                flags: { USA:'visa-free:0:US territory', PHL:'visa-free:90 days:CNMI-only entry permit', CHN:'visa-free:21 days:CNMI-only visa waiver', IND:'visa-required:0:CNMI entry permit required', MEX:'visa-free:90 days:CNMI-only visa waiver', GBR:'visa-free:90 days:CNMI-only visa waiver' }},
+            'GUM': { name: 'Guam (USA)', coords: [13.4, 144.8],
+                flags: { USA:'visa-free:0:US territory', PHL:'visa-free:45 days:Guam-CNMI entry permit', CHN:'visa-free:45 days:Guam-CNMI entry permit', IND:'visa-required:0:Entry permit required', MEX:'visa-free:45 days:Guam-CNMI entry permit', GBR:'visa-free:45 days:Guam-CNMI entry permit' }},
+            'RUS': { name: 'Russia', coords: [61.5, 105.3],
+                flags: { USA:'visa-required:0:B tourist visa required', PHL:'evisa:16 days:eVisa available', CHN:'visa-free:30 days:Valid Chinese passport; group tours', IND:'evisa:16 days:eVisa available', MEX:'visa-required:0:B tourist visa required', GBR:'visa-required:0:B tourist visa required' }},
+            'UKR': { name: 'Ukraine', coords: [48.4, 31.2],
+                flags: { USA:'visa-free:90 days:Visa-free for tourism', PHL:'visa-free:90 days:Visa-free for tourism', CHN:'visa-required:0:Tourist visa required', IND:'visa-required:0:Tourist visa required', MEX:'visa-free:90 days:Visa-free for tourism', GBR:'visa-free:90 days:Visa-free for tourism' }},
+};
+        // ─── Map initialization
+        var map = L.map("map", {center: [20, 0], zoom: 2, minZoom: 2, maxZoom: 8});
+        L.tileLayer("https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png", {attribution: "&copy; <a href='https://www.openstreetmap.org/copyright'>OSM</a> &copy; <a href='https://carto.com/'>CARTO</a>", subdomains: "abcd", maxZoom: 20}).addTo(map);
+        var colors = {visaFree: "#22c55e", visaOnArrival: "#eab308", eVisa: "#3b82f6", visaRequired: "#ef4444", specialZone: "#a855f7"};
+        var currentPassport = "any";
+        var geoJsonLayer = null;
+        var specialZonesLayer = L.layerGroup().addTo(map);
+        var showSpecialZones = true;
+        var specialZones = [
+            {name:"Hong Kong SAR", coords:[22.3,114.2], note:"Separate immigration from China"},
+            {name:"Macau SAR", coords:[22.2,113.5], note:"Separate visa policy"},
+            {name:"Micronesia (COFA)", coords:[7.5,150.5], note:"COFA: US citizens visa-free 30 days"},
+            {name:"Marshall Islands (COFA)", coords:[7.0,171.0], note:"COFA: US citizens visa-free 90 days"},
+            {name:"Palau", coords:[7.5,134.5], note:"Visa-free for US, PH, CN, IN, MX, UK citizens"},
+            {name:"Jeju Island, Korea", coords:[33.5,126.5], note:"Some nationals can visit Jeju without mainland visa"},
+            {name:"Hainan Island, China", coords:[19.5,109.5], note:"Visa-free for group tours from 59 countries"},
+            {name:"Shenzhen SEZ, China", coords:[22.5,114.0], note:"5-day visa-free for cruise passengers"},
+            {name:"Guernsey, UK", coords:[49.4,-2.5], note:"Common Travel Area with UK/Ireland"},
+            {name:"Jersey, UK", coords:[49.2,-2.1], note:"Common Travel Area"},
+            {name:"Isle of Man", coords:[54.2,-4.5], note:"Common Travel Area"},
+            {name:"Gibraltar", coords:[36.1,-5.3], note:"British Overseas Territory"},
+            {name:"Canary Islands, Spain", coords:[28.0,-15.5], note:"Part of Spain / Schengen"},
+            {name:"Madeira, Portugal", coords:[32.7,-17.0], note:"Part of Portugal / Schengen"},
+            {name:"Azores, Portugal", coords:[37.7,-25.7], note:"Part of Portugal / Schengen"},
+            {name:"Faroe Islands", coords:[62.0,-7.0], note:"Part of Denmark"},
+            {name:"Greenland", coords:[72.0,-40.0], note:"Part of Denmark"},
+            {name:"Svalbard, Norway", coords:[78.0,16.0], note:"UNIQUE: No visa required, unlimited stay (Svalbard Treaty)"},
+            {name:"French Polynesia", coords:[-17.6,-149.4], note:"French overseas - NOT Schengen"},
+            {name:"New Caledonia", coords:[-20.9,165.6], note:"French overseas - NOT Schengen"},
+            {name:"Martinique & Guadeloupe", coords:[15.6,-61.5], note:"French overseas - Schengen applies"},
+            {name:"Ladakh, India", coords:[34.5,77.5], note:"Inner Line Permit required"},
+            {name:"Arunachal Pradesh, India", coords:[28.0,94.0], note:"Restricted Area Permit required"},
+            {name:"Nagaland & Sikkim, India", coords:[26.0,94.5], note:"Special Protected Area Permits"},
+            {name:"Papua, Indonesia", coords:[-3.5,130.0], note:"Special permit required"},
+            {name:"N. Mariana Islands", coords:[15.2,145.7], note:"US territory - CNMI-only entry for PH/CN"},
+            {name:"Guam", coords:[13.4,144.8], note:"US territory - Guam-CNMI permit for PH/CN"},
+            {name:"Bermuda", coords:[32.3,-64.7], note:"British Overseas Territory"}
         ];
-        
         function addSpecialZones() {
-            specialZones.forEach(zone => {
-                const marker = L.circleMarker(zone.coords, {
-                    radius: 8,
-                    fillColor: colors.specialZone,
-                    color: '#fff',
-                    weight: 2,
-                    opacity: 1,
-                    fillOpacity: 0.8
-                }).bindPopup(`<strong>${zone.name}</strong><br><span style="color: #a855f7;">${zone.note}</span>`);
-                specialZonesLayer.addLayer(marker);
+            specialZones.forEach(function(z) {
+                L.circleMarker(z.coords, {radius:8, fillColor:colors.specialZone, color:"#fff", weight:2, opacity:1, fillOpacity:0.8})
+                    .bindPopup("<strong>"+z.name+"</strong><br><span style='color:#a855f7'>"+z.note+"</span>")
+                    .addTo(specialZonesLayer);
             });
         }
-        
         function toggleSpecialZones() {
-            if (map.hasLayer(specialZonesLayer)) {
-                map.removeLayer(specialZonesLayer);
-            } else if (showSpecialZones) {
-                specialZonesLayer.addTo(map);
-            }
+            if (map.hasLayer(specialZonesLayer)) map.removeLayer(specialZonesLayer);
+            else if (showSpecialZones) specialZonesLayer.addTo(map);
         }
-        
-        // Add special zones on load
         addSpecialZones();
-        
-        // Toggle button
-        document.getElementById('toggleZones').addEventListener('click', function() {
+        document.getElementById("toggleZones").addEventListener("click", function() {
             showSpecialZones = !showSpecialZones;
-            this.classList.toggle('active');
+            this.classList.toggle("active");
             toggleSpecialZones();
         });
-        
-        // Status badge class
-        function getStatusClass(status) {
-            switch(status) {
-                case 'visa-free': return 'status-free';
-                case 'visa-on-arrival': return 'status-arrival';
-                case 'evisa': return 'status-evisa';
-                case 'visa-required': return 'status-required';
-                default: return 'status-free';
-            }
+        function parseFlagData(s) {
+            if (!s) return null;
+            var p = s.split(":");
+            return {status: p[0], stay: p[1], conditions: p[2] || ""};
         }
-        
-        function getStatusLabel(status) {
-            switch(status) {
-                case 'visa-free': return 'Visa Free';
-                case 'visa-on-arrival': return 'Visa on Arrival';
-                case 'evisa': return 'eVisa';
-                case 'visa-required': return 'Visa Required';
-                case 'special': return 'Special Status';
-                default: return status;
-            }
+        function getStatusClass(s) {
+            var m = {"visa-free":"status-free","visa-on-arrival":"status-arrival","evisa":"status-evisa","visa-required":"status-required","special":"status-special"};
+            return m[s] || "status-required";
         }
-        
-        // Load country boundaries
-        fetch('https://raw.githubusercontent.com/datasets/geo-countries/master/data/countries.geojson')
-            .then(response => response.json())
-            .then(data => {
-                const geoJsonLayer = L.geoJSON(data, {
-                    style: function(feature) {
-                        const iso = feature.properties.ISO_A3;
-                        const country = countryData[iso];
-                        let fillColor = colors.visaRequired;
-                        
-                        if (country) {
-                            switch(country.status) {
-                                case 'visa-free': fillColor = colors.visaFree; break;
-                                case 'visa-on-arrival': fillColor = colors.visaOnArrival; break;
-                                case 'evisa': fillColor = colors.eVisa; break;
-                                case 'visa-required': fillColor = colors.visaRequired; break;
-                                case 'special': fillColor = colors.specialZone; break;
-                            }
+        function getStatusLabel(s) {
+            var m = {"visa-free":"Visa Free","visa-on-arrival":"Visa on Arrival","evisa":"eVisa","visa-required":"Visa Required","special":"Special"};
+            return m[s] || s;
+        }
+        function getCountryColor(iso) {
+            var c = countryData[iso];
+            if (!c) return colors.visaRequired;
+            if (currentPassport === "any") {
+                if (c.flags) {
+                    var vals = Object.values(c.flags);
+                    for (var i = 0; i < vals.length; i++) {
+                        var f = parseFlagData(vals[i]);
+                        if (f) {
+                            if (f.status === "visa-free") return colors.visaFree;
+                            if (f.status === "evisa") return colors.eVisa;
+                            if (f.status === "visa-on-arrival") return colors.visaOnArrival;
                         }
-                        
-                        return {
-                            fillColor: fillColor,
-                            weight: 1,
-                            opacity: 1,
-                            color: '#1e293b',
-                            fillOpacity: 0.7
-                        };
-                    },
+                    }
+                }
+                return colors.visaRequired;
+            }
+            var fl = parseFlagData(c.flags && c.flags[currentPassport]);
+            if (!fl) return colors.visaRequired;
+            var cm = {"visa-free":colors.visaFree,"visa-on-arrival":colors.visaOnArrival,"evisa":colors.eVisa,"visa-required":colors.visaRequired,"special":colors.specialZone};
+            return cm[fl.status] || colors.visaRequired;
+        }
+        function getPopupHTML(iso) {
+            var c = countryData[iso];
+            if (!c) return null;
+            var passportLabelMap = {"USA":"&#127482;&#127480; US","PHL":"&#127477;&#127469; Filipino","CHN":"&#127463;&#127466; Chinese","IND":"&#127470;&#127468; Indian","MEX":"&#127463;&#127465; Mexican","GBR":"&#127468;&#127463; British"};
+            var emojiMap = {"USA":"&#127482;&#127480;","PHL":"&#127477;&#127469;","CHN":"&#127463;&#127466;","IND":"&#127470;&#127468;","MEX":"&#127463;&#127465;","GBR":"&#127468;&#127463;"};
+            var labelMap = {"USA":"US Citizen","PHL":"Filipino","CHN":"Chinese","IND":"Indian","MEX":"Mexican","GBR":"British"};
+
+            if (currentPassport === "any") {
+                var rows = "";
+                if (c.flags) {
+                    var rowArr = [];
+                    Object.keys(c.flags).forEach(function(pp) {
+                        var f = parseFlagData(c.flags[pp]);
+                        if (!f) return;
+                        var em = emojiMap[pp] || "";
+                        rowArr.push("<div class='info-row'><span class='info-label'>" + em + " " + pp + ":</span><span class='info-value'><span class='status-badge " + getStatusClass(f.status) + "' style='font-size:0.65rem;padding:0.1rem 0.4rem'>" + f.stay + "</span></span></div>");
+                    });
+                    rows = rowArr.join("");
+                }
+                var sp = "";
+                if (c.specialZones) {
+                    var zoneArr = [];
+                    c.specialZones.forEach(function(z) {
+                        zoneArr.push("<div class='zone-item'><strong>" + z.name + "</strong><br>" + z.condition + "</div>");
+                    });
+                    sp = "<div class='special-zones'><h4>&#10024; Special Zones</h4>" + zoneArr.join("") + "</div>";
+                }
+                return "<div class='country-info'><h2>" + c.name + " <span class='status-badge' style='background:#334155;font-size:0.65rem'>All passports</span></h2><p style='font-size:0.8rem;color:#94a3b8;margin-bottom:0.75rem'>Select a passport above to filter</p><div class='info-grid'>" + (rows || "<p style='color:#94a3b8;font-size:0.8rem'>No data</p>") + "</div>" + sp + "</div>";
+            }
+            var fl = parseFlagData(c.flags && c.flags[currentPassport]);
+            if (!fl) return null;
+            var pLabel = passportLabelMap[currentPassport] || currentPassport;
+            var sp = "";
+            if (c.specialZones) {
+                var zoneArr = [];
+                c.specialZones.forEach(function(z) {
+                    zoneArr.push("<div class='zone-item'><strong>" + z.name + "</strong><br>" + z.condition + "</div>");
+                });
+                sp = "<div class='special-zones'><h4>&#10024; Special Zones</h4>" + zoneArr.join("") + "</div>";
+            }
+            return "<div class='country-info'><h2>" + c.name + " <span class='status-badge " + getStatusClass(fl.status) + "'>" + getStatusLabel(fl.status) + "</span> <span class='passport-tag'>" + pLabel + "</span></h2><div class='info-grid'><div class='info-row'><span class='info-label'>Max Stay:</span><span class='info-value'>" + fl.stay + "</span></div><div class='info-row'><span class='info-label'>Conditions:</span><span class='info-value'>" + fl.conditions + "</span></div></div>" + sp + "<a href='https://www.timaticweb.com/' target='_blank' class='source-link'>Source: IATA Timatic</a></div>";
+        }
+        document.getElementById("passportSelect").addEventListener("change", function() {
+            currentPassport = this.value;
+            var banner = document.getElementById("passportBanner");
+            var bannerText = document.getElementById("passportBannerText");
+            var labelMap = {"USA":"US Citizen","PHL":"Filipino","CHN":"Chinese","IND":"Indian","MEX":"Mexican","GBR":"British"};
+            if (currentPassport === "any") {
+                banner.classList.remove("visible");
+            } else {
+                bannerText.textContent = labelMap[currentPassport] || currentPassport;
+                banner.classList.add("visible");
+            }
+            if (geoJsonLayer) geoJsonLayer.setStyle(styleCountry);
+        });
+        function styleCountry(feature) {
+            var iso = feature.properties.ISO_A3;
+            return {fillColor: getCountryColor(iso), weight: 1, opacity: 1, color: "#1e293b", fillOpacity: 0.75};
+        }
+        fetch("https://raw.githubusercontent.com/datasets/geo-countries/master/data/countries.geojson")
+            .then(function(r) { return r.json(); })
+            .then(function(data) {
+                geoJsonLayer = L.geoJSON(data, {
+                    style: styleCountry,
                     onEachFeature: function(feature, layer) {
-                        const iso = feature.properties.ISO_A3;
-                        const country = countryData[iso];
-                        
-                        if (country) {
-                            layer.bindPopup(`
-                                <div class="country-info">
-                                    <h2>
-                                        ${country.name}
-                                        <span class="status-badge ${getStatusClass(country.status)}">${getStatusLabel(country.status)}</span>
-                                    </h2>
-                                    <div class="info-grid">
-                                        <div class="info-row">
-                                            <span class="info-label">Max Stay:</span>
-                                            <span class="info-value">${country.stay}</span>
-                                        </div>
-                                        <div class="info-row">
-                                            <span class="info-label">Conditions:</span>
-                                            <span class="info-value">${country.conditions}</span>
-                                        </div>
-                                        <div class="info-row">
-                                            <span class="info-label">Last Updated:</span>
-                                            <span class="info-value">${country.lastUpdated}</span>
-                                        </div>
-                                    </div>
-                                    ${country.specialZones ? `
-                                        <div class="special-zones">
-                                            <h4>✨ Special Zones</h4>
-                                            ${country.specialZones.map(zone => `
-                                                <div class="zone-item">
-                                                    <strong>${zone.name}</strong><br>
-                                                    ${zone.condition}
-                                                </div>
-                                            `).join('')}
-                                        </div>
-                                    ` : ''}
-                                    <a href="https://www.timaticweb.com/" target="_blank" class="source-link">Source: IATA Timatic →</a>
-                                </div>
-                            `);
-                        }
+                        var iso = feature.properties.ISO_A3;
+                        var h = getPopupHTML(iso);
+                        if (h) layer.bindPopup(h);
                     }
                 }).addTo(map);
             })
-            .catch(err => console.error('Error loading GeoJSON:', err));
-        
+            .catch(function(e) { console.error("GeoJSON error:", e); });
+
         // Search functionality
-        document.getElementById('searchBox').addEventListener('input', function(e) {
-            const query = e.target.value.toLowerCase();
-            if (query.length < 2) return;
-            
-            // Simple search - would need to be enhanced for production
-            Object.entries(countryData).forEach(([iso, data]) => {
-                if (data.name.toLowerCase().includes(query)) {
-                    // Could add marker or highlight here
-                    console.log('Found:', data.name);
-                }
+        var searchBox = document.getElementById("searchBox");
+        var searchResults = document.getElementById("searchResults");
+        var searchClear = document.getElementById("searchClear");
+        var highlightedIndex = -1;
+
+        function doSearch(query) {
+            if (query.length < 2) {
+                searchResults.classList.remove("active");
+                return;
+            }
+            var q = query.toLowerCase();
+            var all = Object.keys(countryData).map(function(k) {
+                return {iso: k, name: countryData[k].name, coords: countryData[k].coords};
             });
+            var matches = all.filter(function(c) { return c.name.toLowerCase().indexOf(q) !== -1; }).slice(0, 8);
+
+            if (!matches.length) {
+                searchResults.innerHTML = "<div class='search-no-results'>No countries found</div>";
+                searchResults.classList.add("active");
+                return;
+            }
+
+            highlightedIndex = -1;
+            var html = "";
+            matches.forEach(function(m) {
+                var c = countryData[m.iso];
+                var badge = "";
+                if (c) {
+                    if (currentPassport !== "any") {
+                        var fl = parseFlagData(c.flags && c.flags[currentPassport]);
+                        if (fl) badge = "<span class='search-result-status " + getStatusClass(fl.status) + "'>" + getStatusLabel(fl.status) + "</span>";
+                    } else {
+                        badge = "<span class='search-result-status' style='background:#334155;color:#94a3b8'>All</span>";
+                    }
+                }
+                html += "<div class='search-result-item' data-iso='" + m.iso + "' data-coords='" + m.coords + "' data-name='" + m.name + "'><span class='search-result-name'>" + m.name + "</span>" + badge + "</div>";
+            });
+            searchResults.innerHTML = html;
+            searchResults.classList.add("active");
+
+            searchResults.querySelectorAll(".search-result-item").forEach(function(item) {
+                item.addEventListener("click", function() {
+                    var coordStr = this.dataset.coords;
+                    var coords = [parseFloat(coordStr.split(",")[0]), parseFloat(coordStr.split(",")[1])];
+                    map.flyTo(coords, 6, {duration: 1.5});
+                    searchBox.value = this.dataset.name;
+                    searchResults.classList.remove("active");
+                    if (geoJsonLayer) {
+                        var iso = this.dataset.iso;
+                        geoJsonLayer.eachLayer(function(layer) {
+                            if (layer.feature && layer.feature.properties.ISO_A3 === iso) {
+                                setTimeout(function() { layer.openPopup(); }, 1600);
+                            }
+                        });
+                    }
+                });
+            });
+        }
+
+        searchBox.addEventListener("input", function(e) {
+            searchClear.classList.toggle("visible", e.target.value.length > 0);
+            doSearch(e.target.value);
         });
-        
+        searchBox.addEventListener("keydown", function(e) {
+            var items = searchResults.querySelectorAll(".search-result-item");
+            if (!items.length) return;
+            if (e.key === "ArrowDown") {
+                e.preventDefault();
+                highlightedIndex = Math.min(highlightedIndex + 1, items.length - 1);
+                items.forEach(function(it, i) { it.classList.toggle("highlighted", i === highlightedIndex); });
+            } else if (e.key === "ArrowUp") {
+                e.preventDefault();
+                highlightedIndex = Math.max(highlightedIndex - 1, 0);
+                items.forEach(function(it, i) { it.classList.toggle("highlighted", i === highlightedIndex); });
+            } else if (e.key === "Enter" && highlightedIndex >= 0) {
+                e.preventDefault();
+                items[highlightedIndex].click();
+            } else if (e.key === "Escape") {
+                searchResults.classList.remove("active");
+            }
+        });
+        searchClear.addEventListener("click", function() {
+            searchBox.value = "";
+            searchClear.classList.remove("visible");
+            searchResults.classList.remove("active");
+            searchBox.focus();
+        });
+        searchBox.addEventListener("focus", function() { if (searchBox.value.length >= 2) doSearch(searchBox.value); });
+        document.addEventListener("click", function(e) {
+            if (!e.target.closest(".search-wrapper")) searchResults.classList.remove("active");
+        });
+
         // Legend
-        const legend = L.control({ position: 'bottomright' });
-        
-        legend.onAdd = function(map) {
-            const div = L.DomUtil.create('div', 'legend');
-            div.innerHTML = `
-                <h3>Visa Status</h3>
-                <div class="legend-item">
-                    <div class="legend-color" style="background: ${colors.visaFree}"></div>
-                    <span>Visa Free</span>
-                </div>
-                <div class="legend-item">
-                    <div class="legend-color" style="background: ${colors.visaOnArrival}"></div>
-                    <span>Visa on Arrival</span>
-                </div>
-                <div class="legend-item">
-                    <div class="legend-color" style="background: ${colors.eVisa}"></div>
-                    <span>eVisa</span>
-                </div>
-                <div class="legend-item">
-                    <div class="legend-color" style="background: ${colors.visaRequired}"></div>
-                    <span>Visa Required</span>
-                </div>
-                <div class="legend-item">
-                    <div class="legend-color" style="background: ${colors.specialZone}"></div>
-                    <span>Special Zone</span>
-                </div>
-            `;
+        var legend = L.control({position: "bottomright"});
+        legend.onAdd = function() {
+            var div = L.DomUtil.create("div", "legend");
+            div.innerHTML = "<h3>Visa Status</h3>" +
+                "<div class='legend-item'><div class='legend-color' style='background:" + colors.visaFree + "'></div><span>Visa Free</span></div>" +
+                "<div class='legend-item'><div class='legend-color' style='background:" + colors.visaOnArrival + "'></div><span>Visa on Arrival</span></div>" +
+                "<div class='legend-item'><div class='legend-color' style='background:" + colors.eVisa + "'></div><span>eVisa</span></div>" +
+                "<div class='legend-item'><div class='legend-color' style='background:" + colors.visaRequired + "'></div><span>Visa Required</span></div>" +
+                "<div class='legend-item'><div class='legend-color' style='background:" + colors.specialZone + "'></div><span>Special Zone</span></div>";
             return div;
         };
-        
         legend.addTo(map);
     </script>
 </body>
